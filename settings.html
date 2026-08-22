@@ -1,0 +1,1238 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Settings — Axion Desk</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%2309090E'/%3E%3Cline x1='8' y1='25' x2='16' y2='8' stroke='%236B7FF0' stroke-width='2.6' stroke-linecap='round'/%3E%3Cline x1='24' y1='25' x2='16' y2='8' stroke='%236B7FF0' stroke-width='2.6' stroke-linecap='round'/%3E%3Cline x1='9.5' y1='25' x2='22.5' y2='25' stroke='%236B7FF0' stroke-width='2.6' stroke-linecap='round'/%3E%3Ccircle cx='16' cy='8' r='3' fill='%233DD68C'/%3E%3C/svg%3E"/>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+    :root, [data-theme="dark"] {
+      --bg:#09090E;--surface:#111118;--elevated:#16161F;--border:#1F1F30;
+      --accent:#4F6EF7;--adim:rgba(79,110,247,0.1);
+      --text:#DDDDE8;--muted:#5A5A78;--faint:#2E2E46;
+      --green:#3DD68C;--red:#F75A5A;--yellow:#F7C948;--purple:#C896FF;
+      --fd:'Space Grotesk',sans-serif;--fb:'Inter',sans-serif;--fm:'JetBrains Mono',monospace;
+      --sw:220px;
+      --shadow:0 8px 32px rgba(0,0,0,0.4);
+    }
+
+    [data-theme="light"] {
+      --bg:#F4F5F9;--surface:#FFFFFF;--elevated:#F0F1F6;--border:#E2E4ED;
+      --accent:#4F6EF7;--adim:rgba(79,110,247,0.08);
+      --text:#1A1A2E;--muted:#6B6B85;--faint:#C5C7D4;
+      --green:#16A34A;--red:#DC2626;--yellow:#D97706;--purple:#9333EA;
+      --shadow:0 8px 32px rgba(0,0,0,0.08);
+    }
+
+    html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--fb);font-size:14px;line-height:1.6;overflow:hidden;transition:background 0.25s,color 0.25s}
+    ::-webkit-scrollbar{width:4px;height:4px}
+    ::-webkit-scrollbar-track{background:transparent}
+    ::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+
+    .app{display:flex;height:100vh;overflow:hidden}
+
+    /* Sidebar */
+    .sidebar{width:var(--sw);flex-shrink:0;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;padding:20px 12px;overflow-y:auto;transition:background 0.25s,border-color 0.25s}
+    .sidebar-logo{display:flex;align-items:center;gap:8px;text-decoration:none;margin-bottom:28px;padding:0 6px}
+    .logo-text{font-family:var(--fd);font-size:0.9rem;font-weight:700;color:var(--text);letter-spacing:-0.02em}
+    .logo-text span{color:var(--accent)}
+    .nav-label{font-family:var(--fm);font-size:0.55rem;color:var(--faint);text-transform:uppercase;letter-spacing:0.1em;padding:0 8px;margin:18px 0 5px}
+    .nav-item{display:flex;align-items:center;gap:8px;padding:8px 8px;border-radius:7px;text-decoration:none;color:var(--muted);font-size:0.82rem;font-weight:500;transition:background 0.15s,color 0.15s;cursor:pointer;border:none;background:none;width:100%;text-align:left}
+    .nav-item:hover{background:var(--elevated);color:var(--text)}
+    .nav-item.active{background:var(--adim);color:var(--accent)}
+    .nav-icon{font-size:0.9rem;width:16px;text-align:center;flex-shrink:0}
+    .sidebar-spacer{flex:1}
+    .pts-badge{background:var(--elevated);border:1px solid var(--border);border-radius:9px;padding:11px 13px;margin-bottom:10px}
+    .pts-label{font-family:var(--fm);font-size:0.55rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:3px}
+    .pts-val{font-family:var(--fm);font-size:1rem;font-weight:600;color:var(--yellow)}
+    .pts-streak{font-family:var(--fm);font-size:0.6rem;color:var(--muted);margin-top:2px}
+    .pts-streak span{color:var(--green)}
+    .user-pill{display:flex;align-items:center;gap:9px;padding:9px;border-radius:9px;border:1px solid var(--border);background:var(--elevated)}
+    .u-avatar{width:28px;height:28px;border-radius:50%;background:var(--adim);border:1px solid rgba(79,110,247,0.3);display:flex;align-items:center;justify-content:center;font-family:var(--fd);font-size:0.65rem;font-weight:700;color:var(--accent);flex-shrink:0}
+    .u-name{font-size:0.78rem;font-weight:500;color:var(--text);line-height:1.2}
+    .u-email{font-family:var(--fm);font-size:0.58rem;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:130px}
+
+    .main{flex:1;display:flex;flex-direction:column;overflow:hidden}
+    .topbar{display:flex;align-items:center;justify-content:space-between;padding:13px 24px;border-bottom:1px solid var(--border);background:var(--surface);flex-shrink:0;gap:12px;transition:background 0.25s,border-color 0.25s}
+    .topbar-left{display:flex;flex-direction:column;min-width:0}
+    .page-title{font-family:var(--fd);font-size:1rem;font-weight:700;letter-spacing:-0.02em}
+    .page-sub{font-family:var(--fm);font-size:0.6rem;color:var(--muted);margin-top:1px}
+    .btn-hamburger{display:none;align-items:center;justify-content:center;width:36px;height:36px;border-radius:8px;border:1px solid var(--border);background:var(--elevated);color:var(--text);cursor:pointer;font-size:1.1rem;flex-shrink:0;padding:0}
+    .sidebar-backdrop{display:none;position:fixed;inset:0;background:rgba(9,9,14,0.6);z-index:90;opacity:0;transition:opacity 0.2s;pointer-events:none}
+    .sidebar-backdrop.show{opacity:1;pointer-events:all}
+
+    .settings-scroll{flex:1;overflow-y:auto;padding:24px;max-width:760px}
+
+    .settings-section{margin-bottom:28px}
+    .section-title{font-family:var(--fd);font-size:0.85rem;font-weight:600;letter-spacing:-0.01em;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+    .section-title .badge{font-family:var(--fm);font-size:0.55rem;background:var(--adim);color:var(--accent);padding:2px 7px;border-radius:99px;font-weight:500}
+    .section-card{background:var(--surface);border:1px solid var(--border);border-radius:11px;overflow:hidden;transition:background 0.25s,border-color 0.25s}
+    .setting-row{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:14px 18px;border-bottom:1px solid var(--border)}
+    .setting-row:last-child{border-bottom:none}
+    .setting-row.stack{flex-direction:column;align-items:stretch}
+    .setting-label{font-size:0.85rem;font-weight:500;color:var(--text)}
+    .setting-hint{font-family:var(--fm);font-size:0.6rem;color:var(--muted);margin-top:2px;line-height:1.4}
+    .setting-value{font-family:var(--fm);font-size:0.75rem;color:var(--muted);text-align:right}
+
+    .fi{width:100%;background:var(--elevated);border:1px solid var(--border);border-radius:7px;padding:9px 12px;color:var(--text);font-family:var(--fb);font-size:0.85rem;outline:none;transition:border-color 0.15s,background 0.25s}
+    .fi:focus{border-color:var(--accent)}
+    .fi:disabled{opacity:0.55;cursor:not-allowed}
+    .fi::placeholder{color:var(--faint)}
+    select.fi{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%235A5A78'%3E%3Cpath d='M2 4l4 4 4-4'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:32px}
+    .frow{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    .fg{display:flex;flex-direction:column;gap:5px}
+    .fl{font-family:var(--fm);font-size:0.6rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.07em}
+
+    .toggle{position:relative;width:42px;height:24px;flex-shrink:0}
+    .toggle input{opacity:0;width:0;height:0}
+    .toggle-slider{position:absolute;cursor:pointer;inset:0;background:var(--faint);border-radius:99px;transition:0.2s}
+    .toggle-slider:before{position:absolute;content:"";height:18px;width:18px;left:3px;bottom:3px;background:#fff;border-radius:50%;transition:0.2s}
+    .toggle input:checked + .toggle-slider{background:var(--accent)}
+    .toggle input:checked + .toggle-slider:before{transform:translateX(18px)}
+
+    .btn-primary{padding:9px 16px;border-radius:8px;background:var(--accent);color:#fff;border:none;cursor:pointer;font-family:var(--fb);font-size:0.82rem;font-weight:600;transition:opacity 0.15s}
+    .btn-primary:hover{opacity:0.88}
+    .btn-primary:disabled{opacity:0.4;cursor:not-allowed}
+    .btn-ghost{padding:9px 16px;border-radius:8px;background:transparent;color:var(--muted);border:1px solid var(--border);cursor:pointer;font-family:var(--fb);font-size:0.82rem;font-weight:500;transition:all 0.15s}
+    .btn-ghost:hover{color:var(--text);border-color:var(--faint)}
+    .btn-danger{padding:9px 16px;border-radius:8px;background:rgba(247,90,90,0.12);color:var(--red);border:1px solid rgba(247,90,90,0.3);cursor:pointer;font-family:var(--fb);font-size:0.82rem;font-weight:600;transition:opacity 0.15s}
+    .btn-danger:hover{opacity:0.88}
+    .btn-sm{padding:7px 12px;font-size:0.78rem}
+    .btn-save-all{width:100%;padding:14px 20px;border-radius:10px;background:var(--accent);color:#fff;border:none;cursor:pointer;font-family:var(--fd);font-size:0.95rem;font-weight:600;letter-spacing:-0.01em;transition:opacity 0.15s,transform 0.15s;display:flex;align-items:center;justify-content:center;gap:10px}
+    .btn-save-all:hover{opacity:0.9}
+    .btn-save-all:active{transform:scale(0.99)}
+    .btn-save-all:disabled{opacity:0.45;cursor:not-allowed}
+
+    .link-row{display:flex;align-items:center;gap:10px;padding:12px 18px;border-bottom:1px solid var(--border);text-decoration:none;color:var(--text);transition:background 0.15s;cursor:pointer}
+    .link-row:last-child{border-bottom:none}
+    .link-row:hover{background:rgba(127,127,127,0.04)}
+    .link-row .lr-icon{font-size:1rem;width:22px;text-align:center}
+    .link-row .lr-text{flex:1;font-size:0.85rem;font-weight:500}
+    .link-row .lr-sub{font-family:var(--fm);font-size:0.58rem;color:var(--muted)}
+    .link-row .lr-arrow{color:var(--faint);font-size:0.85rem}
+
+    .stat-pills{display:flex;gap:10px;flex-wrap:wrap}
+    .stat-pill{background:var(--elevated);border:1px solid var(--border);border-radius:9px;padding:12px 16px;min-width:120px}
+    .sp-label{font-family:var(--fm);font-size:0.55rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:4px}
+    .sp-val{font-family:var(--fm);font-size:1.1rem;font-weight:600;color:var(--text)}
+    .sp-val.y{color:var(--yellow)}.sp-val.g{color:var(--green)}.sp-val.a{color:var(--accent)}
+
+    .chip-group{display:flex;flex-wrap:wrap;gap:8px}
+    .chip{padding:6px 12px;border-radius:99px;border:1px solid var(--border);background:var(--elevated);font-size:0.78rem;color:var(--muted);cursor:pointer;transition:all 0.15s;user-select:none}
+    .chip:hover{border-color:var(--faint);color:var(--text)}
+    .chip.active{background:var(--adim);border-color:var(--accent);color:var(--accent)}
+
+    .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(16px);background:var(--elevated);border:1px solid var(--border);border-radius:9px;padding:9px 18px;font-family:var(--fm);font-size:0.72rem;color:var(--text);opacity:0;transition:opacity 0.2s,transform 0.2s;z-index:300;pointer-events:none;white-space:nowrap;max-width:90vw;box-shadow:var(--shadow)}
+    .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+    .toast.g{border-color:rgba(61,214,140,0.35);color:var(--green)}
+    .toast.r{border-color:rgba(247,90,90,0.35);color:var(--red)}
+
+    .overlay{position:fixed;inset:0;background:rgba(9,9,14,0.75);backdrop-filter:blur(5px);z-index:200;opacity:0;pointer-events:none;display:flex;align-items:center;justify-content:center;transition:opacity 0.2s;padding:16px}
+    [data-theme="light"] .overlay{background:rgba(0,0,0,0.45)}
+    .overlay.open{opacity:1;pointer-events:all}
+    .modal{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:24px;width:100%;max-width:420px;transform:scale(0.96) translateY(8px);transition:transform 0.22s cubic-bezier(0.32,0.72,0,1);max-height:90vh;overflow-y:auto;box-shadow:var(--shadow)}
+    .overlay.open .modal{transform:scale(1) translateY(0)}
+    .modal-wide{max-width:640px}
+    .modal-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;position:sticky;top:0;background:var(--surface);padding-bottom:8px;z-index:2}
+    .modal-title{font-family:var(--fd);font-size:0.95rem;font-weight:600}
+    .btn-x{background:none;border:none;color:var(--muted);cursor:pointer;font-size:0.8rem;padding:3px 6px;border-radius:4px}
+    .btn-x:hover{color:var(--text)}
+    .modal-actions{display:flex;gap:8px;margin-top:18px}
+    .btn-cancel{flex:1;padding:10px;background:transparent;border:1px solid var(--border);border-radius:8px;font-family:var(--fb);font-size:0.85rem;font-weight:500;color:var(--muted);cursor:pointer}
+    .btn-cancel:hover{color:var(--text);border-color:var(--faint)}
+    .btn-save{flex:2;padding:10px;background:var(--accent);border:none;border-radius:8px;font-family:var(--fb);font-size:0.85rem;font-weight:600;color:#fff;cursor:pointer}
+    .btn-save:hover{opacity:0.88}
+    .btn-danger-solid{flex:2;padding:10px;background:var(--red);border:none;border-radius:8px;font-family:var(--fb);font-size:0.85rem;font-weight:600;color:#fff;cursor:pointer}
+    .btn-danger-solid:hover{opacity:0.88}
+
+    .policy-body{font-size:0.875rem;color:var(--muted);line-height:1.7;font-weight:300}
+    .policy-body h3{font-family:var(--fd);font-size:0.9rem;font-weight:600;color:var(--text);margin:22px 0 8px;letter-spacing:-0.01em}
+    .policy-body p{margin-bottom:12px}
+    .policy-body ul{margin:8px 0 14px 18px;display:flex;flex-direction:column;gap:6px}
+    .policy-body li{font-size:0.85rem}
+    .policy-body strong{color:var(--text);font-weight:500}
+    .policy-highlight{background:var(--adim);border:1px solid rgba(79,110,247,0.2);border-radius:8px;padding:12px 14px;margin:14px 0;font-family:var(--fm);font-size:0.78rem;color:var(--muted)}
+
+    .danger-zone{border-color:rgba(247,90,90,0.25)}
+    .danger-zone .setting-label{color:var(--red)}
+
+    .save-all-wrap{margin-bottom:28px}
+
+    @media(max-width:900px){
+      .sidebar{position:fixed;top:0;left:0;bottom:0;z-index:95;width:min(280px,85vw);transform:translateX(-105%);transition:transform 0.28s cubic-bezier(0.32,0.72,0,1);box-shadow:8px 0 24px rgba(0,0,0,0.4)}
+      .sidebar.open{transform:translateX(0)}
+      .sidebar-backdrop{display:block}
+      .btn-hamburger{display:flex}
+      .topbar{padding:10px 12px}
+      .settings-scroll{padding:16px 12px}
+      .frow{grid-template-columns:1fr}
+      .setting-row{flex-wrap:wrap;padding:12px 14px}
+      .modal-wide{max-width:100%}
+    }
+  </style>
+</head>
+<body>
+<div class="app">
+  <div class="sidebar-backdrop" id="sidebarBackdrop" onclick="closeSidebar()"></div>
+
+  <aside class="sidebar" id="sidebar">
+    <a href="desk.html" class="sidebar-logo">
+      <svg width="26" height="26" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect width="40" height="40" rx="10" fill="#09090E"/>
+        <ellipse cx="20" cy="30" rx="16" ry="6" stroke="#2A2A50" stroke-width="0.7" fill="none"/>
+        <ellipse cx="20" cy="30" rx="11" ry="4" stroke="#2A2A50" stroke-width="0.7" fill="none"/>
+        <ellipse cx="20" cy="30" rx="6" ry="2" stroke="#2A2A50" stroke-width="0.7" fill="none"/>
+        <line x1="20" y1="10" x2="9" y2="31" stroke="#6B7FF0" stroke-width="3.2" stroke-linecap="round"/>
+        <line x1="20" y1="10" x2="31" y2="31" stroke="#6B7FF0" stroke-width="3.2" stroke-linecap="round"/>
+        <line x1="10" y1="31" x2="30" y2="31" stroke="#6B7FF0" stroke-width="3.2" stroke-linecap="round"/>
+        <circle cx="20" cy="10" r="4" fill="#3DD68C"/>
+      </svg>
+      <span class="logo-text">Axion<span>Desk</span></span>
+    </a>
+
+    <span class="nav-label">My Desk</span>
+    <a href="desk.html" class="nav-item"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 01-1 1H4a1 1 0 01-1-1V9.5z"/><path d="M9 21V12h6v9"/></svg>Overview</a>
+    <a href="desk.html#section-trades" class="nav-item"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg>Trade Log</a>
+    <a href="desk.html#section-markets" class="nav-item"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M7 14l4-4 4 4 5-6"/></svg>Markets</a>
+    <a href="https://axiondesk.feedbear.com" target="_blank" rel="noopener" class="nav-item"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>Review</a>
+    <span class="nav-label">Community</span>
+    <a href="floor.html" class="nav-item"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>The Floor</a>
+    <span class="nav-label">Account</span>
+    <a href="settings.html" class="nav-item active"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>Settings</a>
+    <button class="nav-item" onclick="doSignOut()"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>Sign out</button>
+    <div class="sidebar-spacer"></div>
+
+    <div class="pts-badge">
+      <p class="pts-label">Axion Points</p>
+      <p class="pts-val" id="sidebarPts">—</p>
+      <p class="pts-streak" id="sidebarStreak">Loading…</p>
+    </div>
+    <div class="user-pill">
+      <div class="u-avatar" id="uAvatar">?</div>
+      <div style="min-width:0">
+        <p class="u-name" id="uName">Loading…</p>
+        <p class="u-email" id="uEmail">—</p>
+      </div>
+    </div>
+  </aside>
+
+  <div class="main">
+    <div class="topbar">
+      <button class="btn-hamburger" onclick="toggleSidebar()" aria-label="Menu">☰</button>
+      <div class="topbar-left">
+        <span class="page-title">Settings</span>
+        <span class="page-sub">Profile · Trading · AI · Theme · Data · Account</span>
+      </div>
+    </div>
+
+    <div class="settings-scroll">
+
+      <!-- PROFILE -->
+      <div class="settings-section">
+        <h2 class="section-title">Profile</h2>
+        <div class="section-card">
+          <div class="setting-row stack">
+            <div class="frow" style="width:100%">
+              <div class="fg">
+                <label class="fl">First name</label>
+                <input class="fi" id="sFirst" type="text" placeholder="First name" autocomplete="given-name"/>
+              </div>
+              <div class="fg">
+                <label class="fl">Last name</label>
+                <input class="fi" id="sLast" type="text" placeholder="Last name" autocomplete="family-name"/>
+              </div>
+            </div>
+            <div class="fg" style="margin-top:4px">
+              <label class="fl">Display name (for The Floor)</label>
+              <input class="fi" id="sDisplay" type="text" placeholder="Optional public name"/>
+            </div>
+            <div class="fg" style="margin-top:4px">
+              <label class="fl">Email</label>
+              <input class="fi" id="sEmail" type="email" disabled placeholder="Email"/>
+              <span class="setting-hint">Email is tied to your login and can’t be changed here.</span>
+            </div>
+            <div class="fg" style="margin-top:4px">
+              <label class="fl">Trading style / bio</label>
+              <input class="fi" id="sBio" type="text" placeholder="e.g. Intraday options · Risk-first · 3 years"/>
+            </div>
+            <div style="display:flex;justify-content:flex-end;margin-top:10px;gap:8px">
+              <button class="btn-primary" id="btnSaveProfile" onclick="saveProfile()">Save profile</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PROGRESS -->
+      <div class="settings-section">
+        <h2 class="section-title">Your progress</h2>
+        <div class="stat-pills">
+          <div class="stat-pill">
+            <p class="sp-label">Axion Points</p>
+            <p class="sp-val y" id="statPts">—</p>
+          </div>
+          <div class="stat-pill">
+            <p class="sp-label">Streak</p>
+            <p class="sp-val g" id="statStreak">—</p>
+          </div>
+          <div class="stat-pill">
+            <p class="sp-label">Trades logged</p>
+            <p class="sp-val a" id="statTrades">—</p>
+          </div>
+          <div class="stat-pill">
+            <p class="sp-label">Member since</p>
+            <p class="sp-val" id="statSince" style="font-size:0.85rem">—</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- TRADING PREFERENCES -->
+      <div class="settings-section">
+        <h2 class="section-title">Trading Preferences</h2>
+        <div class="section-card">
+          <div class="setting-row">
+            <div>
+              <p class="setting-label">Default trade type</p>
+              <p class="setting-hint">Pre-selected when you open Log Trade</p>
+            </div>
+            <select class="fi" id="prefType" style="width:auto;min-width:150px">
+              <option>Intraday</option>
+              <option>Positional</option>
+              <option>Options</option>
+              <option>Futures</option>
+              <option>Swing</option>
+              <option>F&O</option>
+              <option>Scalping</option>
+            </select>
+          </div>
+          <div class="setting-row">
+            <div>
+              <p class="setting-label">Account capital</p>
+              <p class="setting-hint">Used for position sizing & AI risk feedback</p>
+            </div>
+            <input class="fi" id="prefCapital" type="number" min="0" step="1000" placeholder="500000" style="width:130px;text-align:right"/>
+          </div>
+          <div class="setting-row">
+            <div>
+              <p class="setting-label">Default risk per trade</p>
+              <p class="setting-hint">% of capital you’re willing to risk</p>
+            </div>
+            <div style="display:flex;align-items:center;gap:6px">
+              <input class="fi" id="prefRisk" type="number" min="0.1" max="10" step="0.1" value="1" style="width:80px;text-align:right"/>
+              <span class="setting-value">%</span>
+            </div>
+          </div>
+          <div class="setting-row">
+            <div>
+              <p class="setting-label">Minimum Risk : Reward</p>
+              <p class="setting-hint">AI will flag trades below this ratio</p>
+            </div>
+            <select class="fi" id="prefRR" style="width:auto;min-width:110px">
+              <option value="1">1 : 1</option>
+              <option value="1.5">1 : 1.5</option>
+              <option value="2" selected>1 : 2</option>
+              <option value="2.5">1 : 2.5</option>
+              <option value="3">1 : 3</option>
+            </select>
+          </div>
+          <div class="setting-row">
+            <div>
+              <p class="setting-label">Currency</p>
+              <p class="setting-hint">Used across P&amp;L, stats &amp; exports</p>
+            </div>
+            <select class="fi" id="prefCurrency" style="width:auto;min-width:130px">
+              <option value="INR">₹ INR</option>
+              <option value="USD">$ USD</option>
+              <option value="EUR">€ EUR</option>
+              <option value="GBP">£ GBP</option>
+              <option value="AED">د.إ AED</option>
+              <option value="SGD">S$ SGD</option>
+            </select>
+          </div>
+          <div class="setting-row">
+            <div>
+              <p class="setting-label">Timezone</p>
+              <p class="setting-hint">Journal timestamps &amp; market hours</p>
+            </div>
+            <select class="fi" id="prefTimezone" style="width:auto;min-width:180px">
+              <option value="Asia/Kolkata">Asia/Kolkata (IST)</option>
+              <option value="Asia/Dubai">Asia/Dubai (GST)</option>
+              <option value="Asia/Singapore">Asia/Singapore</option>
+              <option value="Europe/London">Europe/London (GMT)</option>
+              <option value="America/New_York">America/New_York (ET)</option>
+              <option value="America/Chicago">America/Chicago (CT)</option>
+              <option value="UTC">UTC</option>
+            </select>
+          </div>
+          <div class="setting-row stack">
+            <div>
+              <p class="setting-label">Preferred markets</p>
+              <p class="setting-hint">Helps AI tailor suggestions</p>
+            </div>
+            <div class="chip-group" id="marketChips" style="margin-top:6px">
+              <span class="chip" data-val="Equity">Equity</span>
+              <span class="chip" data-val="Options">Options</span>
+              <span class="chip" data-val="Futures">Futures</span>
+              <span class="chip" data-val="F&O">F&amp;O</span>
+              <span class="chip" data-val="Crypto">Crypto</span>
+              <span class="chip" data-val="Forex">Forex</span>
+              <span class="chip" data-val="Commodities">Commodities</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- AI ASSISTANT -->
+      <div class="settings-section">
+        <h2 class="section-title">AI Assistant <span class="badge">Core</span></h2>
+        <div class="section-card">
+          <div class="setting-row">
+            <div>
+              <p class="setting-label">AI tone</p>
+              <p class="setting-hint">How Axion talks to you</p>
+            </div>
+            <select class="fi" id="aiTone" style="width:auto;min-width:160px">
+              <option value="strict">Strict coach</option>
+              <option value="balanced" selected>Balanced</option>
+              <option value="supportive">Supportive mentor</option>
+            </select>
+          </div>
+          <div class="setting-row">
+            <div>
+              <p class="setting-label">Primary focus</p>
+              <p class="setting-hint">What AI should prioritise in reviews</p>
+            </div>
+            <select class="fi" id="aiFocus" style="width:auto;min-width:160px">
+              <option value="risk">Risk management</option>
+              <option value="psychology">Psychology &amp; discipline</option>
+              <option value="technical">Technical &amp; setup quality</option>
+              <option value="edge" selected>Overall edge</option>
+            </select>
+          </div>
+          <div class="setting-row">
+            <div>
+              <p class="setting-label">Auto post-trade review</p>
+              <p class="setting-hint">Generate AI review right after you log a trade</p>
+            </div>
+            <label class="toggle">
+              <input type="checkbox" id="aiAutoReview" checked/>
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+          <div class="setting-row">
+            <div>
+              <p class="setting-label">Show confidence score</p>
+              <p class="setting-hint">Display how confident AI is in its feedback</p>
+            </div>
+            <label class="toggle">
+              <input type="checkbox" id="aiConfidence" checked/>
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+          <div class="setting-row">
+            <div>
+              <p class="setting-label">Use full trade history</p>
+              <p class="setting-hint">Allow AI to analyse your complete journal for better insights</p>
+            </div>
+            <label class="toggle">
+              <input type="checkbox" id="aiFullHistory" checked/>
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+          <div class="setting-row">
+            <div>
+              <p class="setting-label">AI language</p>
+              <p class="setting-hint">Language for AI responses</p>
+            </div>
+            <select class="fi" id="aiLang" style="width:auto;min-width:140px">
+              <option value="en" selected>English</option>
+              <option value="hi">Hindi</option>
+              <option value="hinglish">Hinglish</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- JOURNAL -->
+      <div class="settings-section">
+        <h2 class="section-title">Journal Preferences</h2>
+        <div class="section-card">
+          <div class="setting-row">
+            <div>
+              <p class="setting-label">Require emotion tag</p>
+              <p class="setting-hint">Force selecting mood when logging a trade</p>
+            </div>
+            <label class="toggle">
+              <input type="checkbox" id="jrnlEmotion" checked/>
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+          <div class="setting-row">
+            <div>
+              <p class="setting-label">Require setup / strategy</p>
+              <p class="setting-hint">Mandatory field for better analytics</p>
+            </div>
+            <label class="toggle">
+              <input type="checkbox" id="jrnlSetup" checked/>
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+          <div class="setting-row">
+            <div>
+              <p class="setting-label">Show psychology checklist</p>
+              <p class="setting-hint">Pre-trade &amp; post-trade mental checklist</p>
+            </div>
+            <label class="toggle">
+              <input type="checkbox" id="jrnlPsych" checked/>
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+          <div class="setting-row">
+            <div>
+              <p class="setting-label">Auto-save drafts</p>
+              <p class="setting-hint">Save incomplete trades automatically</p>
+            </div>
+            <label class="toggle">
+              <input type="checkbox" id="jrnlAutosave" checked/>
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <!-- NOTIFICATIONS -->
+      <div class="settings-section">
+        <h2 class="section-title">Notifications &amp; Reminders</h2>
+        <div class="section-card">
+          <div class="setting-row">
+            <div>
+              <p class="setting-label">Daily journal reminder</p>
+              <p class="setting-hint">Nudge to log or review trades</p>
+            </div>
+            <label class="toggle">
+              <input type="checkbox" id="notifDaily"/>
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+          <div class="setting-row" id="dailyTimeRow" style="display:none">
+            <div>
+              <p class="setting-label">Reminder time</p>
+              <p class="setting-hint">Local time for the daily nudge</p>
+            </div>
+            <input class="fi" id="notifTime" type="time" value="20:00" style="width:auto"/>
+          </div>
+          <div class="setting-row">
+            <div>
+              <p class="setting-label">Streak protection</p>
+              <p class="setting-hint">Alert if you haven’t logged anything today</p>
+            </div>
+            <label class="toggle">
+              <input type="checkbox" id="notifStreak" checked/>
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+          <div class="setting-row">
+            <div>
+              <p class="setting-label">Weekly performance summary</p>
+              <p class="setting-hint">Email digest every Sunday</p>
+            </div>
+            <label class="toggle">
+              <input type="checkbox" id="notifWeekly"/>
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <!-- APPEARANCE -->
+      <div class="settings-section">
+        <h2 class="section-title">Appearance</h2>
+        <div class="section-card">
+          <div class="setting-row">
+            <div>
+              <p class="setting-label">Theme</p>
+              <p class="setting-hint">Dark or Light — applied across the whole app</p>
+            </div>
+            <select class="fi" id="prefTheme" style="width:auto;min-width:130px" onchange="applyTheme(this.value)">
+              <option value="dark">Dark</option>
+              <option value="light">Light</option>
+            </select>
+          </div>
+          <div class="setting-row">
+            <div>
+              <p class="setting-label">Density</p>
+              <p class="setting-hint">How compact the interface feels</p>
+            </div>
+            <select class="fi" id="prefDensity" style="width:auto;min-width:130px">
+              <option value="comfortable" selected>Comfortable</option>
+              <option value="compact">Compact</option>
+            </select>
+          </div>
+          <div class="setting-row">
+            <div>
+              <p class="setting-label">Number format</p>
+              <p class="setting-hint">Indian (1,00,000) vs International (100,000)</p>
+            </div>
+            <select class="fi" id="prefNumFormat" style="width:auto;min-width:150px">
+              <option value="en-IN" selected>Indian (en-IN)</option>
+              <option value="en-US">International (en-US)</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- SAVE ALL -->
+      <div class="save-all-wrap">
+        <button class="btn-save-all" id="btnSaveAll" onclick="saveAllSelections()">
+          <span>💾</span>
+          <span>Save All Selections</span>
+        </button>
+        <p style="text-align:center;font-family:var(--fm);font-size:0.6rem;color:var(--muted);margin-top:8px">
+          Saves profile + all preferences to your account
+        </p>
+      </div>
+
+      <!-- DATA & PRIVACY -->
+      <div class="settings-section">
+        <h2 class="section-title">Data &amp; Privacy</h2>
+        <div class="section-card">
+          <div class="setting-row">
+            <div>
+              <p class="setting-label">Export all data</p>
+              <p class="setting-hint">Download your profile, preferences &amp; trades as JSON</p>
+            </div>
+            <button class="btn-ghost btn-sm" onclick="exportData()">Export JSON</button>
+          </div>
+          <div class="setting-row">
+            <div>
+              <p class="setting-label">Export trades as CSV</p>
+              <p class="setting-hint">Spreadsheet-friendly trade log</p>
+            </div>
+            <button class="btn-ghost btn-sm" onclick="exportTradesCSV()">Export CSV</button>
+          </div>
+          <div class="setting-row">
+            <div>
+              <p class="setting-label">Import trades</p>
+              <p class="setting-hint">Upload a CSV of past trades (coming soon)</p>
+            </div>
+            <label class="btn-ghost btn-sm" style="cursor:pointer;margin:0">
+              Choose file
+              <input type="file" accept=".csv" style="display:none" onchange="importTrades(event)"/>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <!-- FEEDBACK -->
+      <div class="settings-section">
+        <h2 class="section-title">Feedback &amp; Support</h2>
+        <div class="section-card">
+          <a class="link-row" href="https://axiondesk.feedbear.com" target="_blank" rel="noopener">
+            <span class="lr-icon">💬</span>
+            <div>
+              <p class="lr-text">Leave feedback on Feedbear</p>
+              <p class="lr-sub">Feature requests, bugs, ideas</p>
+            </div>
+            <span class="lr-arrow">↗</span>
+          </a>
+          <a class="link-row" href="https://mail.google.com/mail/?view=cm&fs=1&to=co.vibecartel@gmail.com&su=Axion%20Desk%20Feedback" target="_blank" rel="noopener">
+            <span class="lr-icon">📧</span>
+            <div>
+              <p class="lr-text">Email us</p>
+              <p class="lr-sub">co.vibecartel@gmail.com</p>
+            </div>
+            <span class="lr-arrow">↗</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- ACCOUNT -->
+      <div class="settings-section">
+        <h2 class="section-title">Account</h2>
+        <div class="section-card">
+          <div class="setting-row">
+            <div>
+              <p class="setting-label">Sign out</p>
+              <p class="setting-hint">Ends your session on this device</p>
+            </div>
+            <button class="btn-ghost" onclick="doSignOut()">Sign out</button>
+          </div>
+          <div class="setting-row danger-zone">
+            <div>
+              <p class="setting-label">Delete account</p>
+              <p class="setting-hint">Permanently erase your profile, trades &amp; data. This cannot be undone.</p>
+            </div>
+            <button class="btn-danger" onclick="openDeleteModal()">Delete account</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ABOUT -->
+      <div class="settings-section" style="margin-bottom:48px">
+        <h2 class="section-title">About</h2>
+        <div class="section-card">
+          <div class="setting-row">
+            <div>
+              <p class="setting-label">Axion Desk</p>
+              <p class="setting-hint">by Vibe Cartel Inc. · AI-assisted trading journal for disciplined traders</p>
+            </div>
+            <span class="setting-value">v1.1</span>
+          </div>
+          <div class="link-row" onclick="openPrivacyModal()">
+            <span class="lr-icon">🔒</span>
+            <div>
+              <p class="lr-text">Privacy Policy</p>
+              <p class="lr-sub">How we handle your data</p>
+            </div>
+            <span class="lr-arrow">→</span>
+          </div>
+          <div class="link-row" onclick="openTermsModal()">
+            <span class="lr-icon">📄</span>
+            <div>
+              <p class="lr-text">Terms &amp; Conditions</p>
+              <p class="lr-sub">The terms you accepted when you joined</p>
+            </div>
+            <span class="lr-arrow">→</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- SIGN-OUT MODAL -->
+<div class="overlay" id="feedbackOverlay" onclick="if(event.target===this)closeFeedbackModal(false)">
+  <div class="modal">
+    <div class="modal-head">
+      <span class="modal-title">Before you go…</span>
+      <button class="btn-x" onclick="closeFeedbackModal(false)">✕</button>
+    </div>
+    <p style="font-size:0.88rem;color:var(--muted);line-height:1.65;margin-bottom:4px">
+      Thanks for using Axion Desk. Your feedback helps us improve.
+    </p>
+    <p style="font-family:var(--fm);font-size:0.65rem;color:var(--faint);margin-bottom:16px">
+      Takes 30 seconds · completely optional
+    </p>
+    <div style="display:flex;flex-direction:column;gap:9px;margin-bottom:18px">
+      <a href="https://mail.google.com/mail/?view=cm&fs=1&to=co.vibecartel@gmail.com&su=Axion%20Desk%20Feedback" target="_blank" rel="noopener"
+         style="display:flex;align-items:center;gap:10px;padding:11px 14px;border-radius:9px;border:1px solid var(--border);background:var(--elevated);color:var(--text);text-decoration:none;font-size:0.82rem;font-weight:500">
+        <span style="font-size:1.1rem">📧</span>
+        <span>Email via Gmail<br><span style="font-family:var(--fm);font-size:0.62rem;color:var(--muted)">co.vibecartel@gmail.com</span></span>
+      </a>
+      <a href="https://axiondesk.feedbear.com" target="_blank" rel="noopener"
+         style="display:flex;align-items:center;gap:10px;padding:11px 14px;border-radius:9px;border:1px solid var(--border);background:var(--elevated);color:var(--text);text-decoration:none;font-size:0.82rem;font-weight:500">
+        <span style="font-size:1.1rem">💬</span>
+        <span>Leave feedback on Feedbear<br><span style="font-family:var(--fm);font-size:0.62rem;color:var(--muted)">axiondesk.feedbear.com</span></span>
+      </a>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeFeedbackModal(false)">Stay signed in</button>
+      <button class="btn-save" onclick="closeFeedbackModal(true)">Sign out</button>
+    </div>
+  </div>
+</div>
+
+<!-- DELETE ACCOUNT MODAL -->
+<div class="overlay" id="deleteOverlay" onclick="if(event.target===this)closeDeleteModal()">
+  <div class="modal">
+    <div class="modal-head">
+      <span class="modal-title" style="color:var(--red)">Delete account permanently</span>
+      <button class="btn-x" onclick="closeDeleteModal()">✕</button>
+    </div>
+    <p style="font-size:0.88rem;color:var(--muted);line-height:1.65;margin-bottom:14px">
+      This will permanently delete your profile, all logged trades, strategies, points and preferences. This action <strong style="color:var(--text)">cannot be undone</strong>.
+    </p>
+    <div class="fg" style="margin-bottom:8px">
+      <label class="fl">Type DELETE to confirm</label>
+      <input class="fi" id="deleteConfirm" type="text" placeholder="DELETE" autocomplete="off"/>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeDeleteModal()">Cancel</button>
+      <button class="btn-danger-solid" id="btnConfirmDelete" onclick="confirmDeleteAccount()" disabled>Delete forever</button>
+    </div>
+  </div>
+</div>
+
+<!-- TERMS & CONDITIONS MODAL -->
+<div class="overlay" id="termsOverlay" onclick="if(event.target===this)closeTermsModal()">
+  <div class="modal modal-wide">
+    <div class="modal-head">
+      <span class="modal-title">Terms &amp; Conditions</span>
+      <button class="btn-x" onclick="closeTermsModal()">✕</button>
+    </div>
+    <div class="policy-body">
+      <p style="font-family:var(--fm);font-size:0.65rem;color:var(--faint);margin-bottom:16px">Version 1.0 · Accepted when you joined Axion Desk</p>
+
+      <h3>⚠️ No investment advice — ever</h3>
+      <p>Axion Desk is a <strong>personal journaling and analysis tool</strong>. It is not a registered investment advisor, broker, or financial service. Nothing on this platform — including the AI analysis feature, community posts on The Floor, or any other feature — constitutes investment advice of any kind.</p>
+      <p>The market is unpredictable. Past performance logged in your Desk does not guarantee future results. Every trade you make is your own decision, made with your own money, at your own risk.</p>
+      <p>Axion AI analyses the data <strong>you log</strong>. It has no access to live market data, your broker account, or external financial information. Its output is a reflection of your own records — not a signal, not a recommendation.</p>
+      <div class="policy-highlight">// Axion Desk does not tell you what to buy, sell, or hold. Ever.</div>
+
+      <h3>📣 The Floor — you are responsible for what you share</h3>
+      <p>The Floor is a space where traders can voluntarily share their personal strategies, setups, and trade ideas. If you post on The Floor, you acknowledge that:</p>
+      <ul>
+        <li>Everything you share is <strong>your personal opinion</strong> — not financial advice.</li>
+        <li>Other traders who act on your shared strategies do so <strong>entirely at their own risk</strong>.</li>
+        <li>You will not use The Floor to solicit clients, promote paid services, or spread misinformation.</li>
+        <li>Axion Desk may remove content that violates community standards.</li>
+      </ul>
+      <div class="policy-highlight">// The Floor is a peer learning space, not a signal service.</div>
+
+      <h3>🔒 Your private Desk — how your data is stored</h3>
+      <p>Your private trade logs, journal entries, and AI analysis sessions are stored under your unique user ID. They are <strong>not visible to any other user</strong>.</p>
+      <p>We store: name, email, trade logs, journal entries, Axion Points, streak data, communication preferences, and the date you accepted these terms.</p>
+      <p>We <strong>do not</strong> sell, share, or monetise your personal data. We do not store broker credentials or payment information.</p>
+
+      <h3>🤖 Axion AI — what it is and what it isn’t</h3>
+      <p>Axion AI is a journaling assistant. Trade data you log is sent to an AI model only to produce your analysis. It is not stored by the AI provider or used to train models.</p>
+      <p>Axion AI cannot access live market data, connect to your broker, predict markets, or give investment advice.</p>
+
+      <h3>⚙️ Service, availability &amp; changes</h3>
+      <p>Axion Desk is provided free of charge on a best-effort basis. We cannot guarantee 100% uptime and are not liable for trading losses arising from downtime. We may update features or these Terms; material changes will require re-acknowledgement.</p>
+
+      <h3>🔞 Age &amp; eligibility</h3>
+      <p>You must be <strong>18 years of age or older</strong>. You are responsible for ensuring your use complies with the laws of your region, including SEBI guidelines in India regarding investment advice and public sharing of strategies.</p>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-save" style="flex:1" onclick="closeTermsModal()">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- PRIVACY POLICY MODAL -->
+<div class="overlay" id="privacyOverlay" onclick="if(event.target===this)closePrivacyModal()">
+  <div class="modal modal-wide">
+    <div class="modal-head">
+      <span class="modal-title">Privacy Policy</span>
+      <button class="btn-x" onclick="closePrivacyModal()">✕</button>
+    </div>
+    <div class="policy-body">
+      <p style="font-family:var(--fm);font-size:0.65rem;color:var(--faint);margin-bottom:16px">Last updated · August 2025 · Axion Desk by Vibe Cartel Inc.</p>
+
+      <h3>1. Who we are</h3>
+      <p>Axion Desk is a personal AI-assisted trading journal operated by Vibe Cartel Inc. This policy explains what data we collect, how we use it, and the choices you have.</p>
+
+      <h3>2. What we collect</h3>
+      <ul>
+        <li><strong>Account data</strong> — name, email address (from signup / Google auth)</li>
+        <li><strong>Journal data</strong> — trade logs, notes, strategies, psychology tags, and any other entries you create</li>
+        <li><strong>Usage data</strong> — Axion Points, streak, preferences, theme, and settings you choose</li>
+        <li><strong>Communication preferences</strong> — whether you opted into news, community digest, or tips emails</li>
+        <li><strong>Technical data</strong> — basic device/browser info needed to run the service securely</li>
+      </ul>
+      <p>We <strong>do not</strong> collect broker credentials, bank details, payment card numbers, or live market account information.</p>
+
+      <h3>3. How we use your data</h3>
+      <ul>
+        <li>To provide and improve the Axion Desk journaling and AI analysis features</li>
+        <li>To calculate points, streaks, and personal statistics</li>
+        <li>To send emails only if you explicitly opted in</li>
+        <li>To respond to support requests and keep the service secure</li>
+      </ul>
+      <p>When you request an AI review, the relevant trade data you have logged is sent to an AI provider solely to generate that response. It is not retained by the provider for training.</p>
+
+      <h3>4. Who can see your data</h3>
+      <p>Your private Desk (trades, notes, AI sessions) is visible <strong>only to you</strong>. Axion Desk staff cannot browse your journal. Content you deliberately post on The Floor is visible to other members of the community.</p>
+      <div class="policy-highlight">// Your private Desk is yours. We are just holding it for you.</div>
+
+      <h3>5. Data storage &amp; security</h3>
+      <p>Data is stored in a secure cloud database under your unique user ID. We use industry-standard security practices. No system is perfect; we continuously work to protect your information.</p>
+
+      <h3>6. Your rights</h3>
+      <ul>
+        <li><strong>Export</strong> — download your data as JSON or CSV from Settings at any time</li>
+        <li><strong>Delete</strong> — permanently delete your account and associated data from Settings</li>
+        <li><strong>Update</strong> — change your profile and preferences whenever you like</li>
+        <li><strong>Opt out</strong> — change email preferences or contact us to stop communications</li>
+      </ul>
+
+      <h3>7. Cookies &amp; local storage</h3>
+      <p>We use local storage and similar technologies to remember your theme, preferences, and session so the app works smoothly. We do not use third-party advertising trackers.</p>
+
+      <h3>8. Changes to this policy</h3>
+      <p>If we make material changes, we will notify you in-app or by email (if you have opted in). Continued use after notice constitutes acceptance of the updated policy.</p>
+
+      <h3>9. Contact</h3>
+      <p>Questions about privacy? Email us at <strong>co.vibecartel@gmail.com</strong>.</p>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-save" style="flex:1" onclick="closePrivacyModal()">Close</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getAuth, onAuthStateChanged, signOut, deleteUser }
+    from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+  import { getFirestore, doc, getDoc, updateDoc, deleteDoc, collection, getDocs, serverTimestamp }
+    from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey:            "AIzaSyCulaEKuCWd65B739Kb3nTY7ujv70WoyG0",
+    authDomain:        "axion-desk.firebaseapp.com",
+    projectId:         "axion-desk",
+    storageBucket:     "axion-desk.firebasestorage.app",
+    messagingSenderId: "493322474720",
+    appId:             "1:493322474720:web:ea6de0e979ef9a61a62c85"
+  };
+
+  const app  = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db   = getFirestore(app);
+
+  let CU = null;
+  let userData = {};
+
+  // Apply theme immediately from localStorage so there’s no flash
+  (function earlyTheme() {
+    const t = localStorage.getItem('axion_prefTheme') || 'dark';
+    document.documentElement.setAttribute('data-theme', t);
+  })();
+
+  onAuthStateChanged(auth, async user => {
+    if (!user) { window.location.href = 'login.html'; return; }
+    CU = user;
+    const snap = await getDoc(doc(db, 'users', user.uid));
+    if (!snap.exists() || !snap.data().termsAccepted) {
+      window.location.href = 't&c.html';
+      return;
+    }
+    userData = snap.data();
+    const d = userData;
+
+    const initials = (d.firstName?.[0] || '') + (d.lastName?.[0] || '');
+    document.getElementById('uAvatar').textContent = initials || '?';
+    document.getElementById('uName').textContent = `${d.firstName || ''} ${d.lastName || ''}`.trim() || 'Trader';
+    document.getElementById('uEmail').textContent = user.email || '—';
+    document.getElementById('sidebarPts').textContent = (d.points || 0).toLocaleString('en-IN') + ' pts';
+    document.getElementById('sidebarStreak').innerHTML = `🔥 <span>${d.streak || 0} day streak</span>`;
+
+    document.getElementById('sFirst').value   = d.firstName || '';
+    document.getElementById('sLast').value    = d.lastName || '';
+    document.getElementById('sDisplay').value = d.displayName || '';
+    document.getElementById('sEmail').value   = user.email || '';
+    document.getElementById('sBio').value     = d.bio || '';
+
+    document.getElementById('statPts').textContent    = (d.points || 0).toLocaleString('en-IN');
+    document.getElementById('statStreak').textContent = (d.streak || 0) + ' days';
+    document.getElementById('statTrades').textContent = (d.tradeCount || 0).toLocaleString('en-IN');
+    if (d.createdAt?.toDate) {
+      document.getElementById('statSince').textContent = d.createdAt.toDate().toLocaleDateString('en-IN', { month: 'short', year: 'numeric' });
+    }
+
+    // Prefer Firestore preferences if present, otherwise localStorage
+    loadPrefs(d.preferences || {});
+  });
+
+  function loadPrefs(cloudPrefs = {}) {
+    const get = (k, def) => {
+      if (cloudPrefs[k] !== undefined && cloudPrefs[k] !== null) return String(cloudPrefs[k]);
+      return localStorage.getItem('axion_' + k) ?? def;
+    };
+
+    document.getElementById('prefType').value      = get('prefType', 'Intraday');
+    document.getElementById('prefCapital').value   = get('prefCapital', '');
+    document.getElementById('prefRisk').value      = get('prefRisk', '1');
+    document.getElementById('prefRR').value        = get('prefRR', '2');
+    document.getElementById('prefCurrency').value  = get('prefCurrency', 'INR');
+    document.getElementById('prefTimezone').value  = get('prefTimezone', 'Asia/Kolkata');
+
+    document.getElementById('aiTone').value         = get('aiTone', 'balanced');
+    document.getElementById('aiFocus').value        = get('aiFocus', 'edge');
+    document.getElementById('aiAutoReview').checked = get('aiAutoReview', 'true') === 'true';
+    document.getElementById('aiConfidence').checked = get('aiConfidence', 'true') === 'true';
+    document.getElementById('aiFullHistory').checked= get('aiFullHistory', 'true') === 'true';
+    document.getElementById('aiLang').value         = get('aiLang', 'en');
+
+    document.getElementById('jrnlEmotion').checked  = get('jrnlEmotion', 'true') === 'true';
+    document.getElementById('jrnlSetup').checked    = get('jrnlSetup', 'true') === 'true';
+    document.getElementById('jrnlPsych').checked    = get('jrnlPsych', 'true') === 'true';
+    document.getElementById('jrnlAutosave').checked = get('jrnlAutosave', 'true') === 'true';
+
+    document.getElementById('notifDaily').checked   = get('notifDaily', 'false') === 'true';
+    document.getElementById('notifTime').value      = get('notifTime', '20:00');
+    document.getElementById('notifStreak').checked  = get('notifStreak', 'true') === 'true';
+    document.getElementById('notifWeekly').checked  = get('notifWeekly', 'false') === 'true';
+    toggleDailyTime();
+
+    const theme = get('prefTheme', 'dark');
+    document.getElementById('prefTheme').value = theme;
+    applyTheme(theme);
+
+    document.getElementById('prefDensity').value   = get('prefDensity', 'comfortable');
+    document.getElementById('prefNumFormat').value = get('prefNumFormat', 'en-IN');
+
+    const markets = (get('prefMarkets', 'Equity,Options,F&O')).split(',').filter(Boolean);
+    document.querySelectorAll('#marketChips .chip').forEach(chip => {
+      chip.classList.toggle('active', markets.includes(chip.dataset.val));
+      chip.onclick = () => chip.classList.toggle('active');
+    });
+  }
+
+  window.applyTheme = function(theme) {
+    document.documentElement.setAttribute('data-theme', theme);
+    localStorage.setItem('axion_prefTheme', theme);
+  };
+
+  function collectAllPrefs() {
+    const markets = [...document.querySelectorAll('#marketChips .chip.active')].map(c => c.dataset.val);
+    return {
+      prefType:      document.getElementById('prefType').value,
+      prefCapital:   document.getElementById('prefCapital').value,
+      prefRisk:      document.getElementById('prefRisk').value,
+      prefRR:        document.getElementById('prefRR').value,
+      prefCurrency:  document.getElementById('prefCurrency').value,
+      prefTimezone:  document.getElementById('prefTimezone').value,
+      prefMarkets:   markets.join(','),
+      aiTone:        document.getElementById('aiTone').value,
+      aiFocus:       document.getElementById('aiFocus').value,
+      aiAutoReview:  document.getElementById('aiAutoReview').checked,
+      aiConfidence:  document.getElementById('aiConfidence').checked,
+      aiFullHistory: document.getElementById('aiFullHistory').checked,
+      aiLang:        document.getElementById('aiLang').value,
+      jrnlEmotion:   document.getElementById('jrnlEmotion').checked,
+      jrnlSetup:     document.getElementById('jrnlSetup').checked,
+      jrnlPsych:     document.getElementById('jrnlPsych').checked,
+      jrnlAutosave:  document.getElementById('jrnlAutosave').checked,
+      notifDaily:    document.getElementById('notifDaily').checked,
+      notifTime:     document.getElementById('notifTime').value,
+      notifStreak:   document.getElementById('notifStreak').checked,
+      notifWeekly:   document.getElementById('notifWeekly').checked,
+      prefTheme:     document.getElementById('prefTheme').value,
+      prefDensity:   document.getElementById('prefDensity').value,
+      prefNumFormat: document.getElementById('prefNumFormat').value
+    };
+  }
+
+  window.saveAllSelections = async function() {
+    if (!CU) return;
+    const btn = document.getElementById('btnSaveAll');
+    btn.disabled = true;
+    btn.innerHTML = '<span>Saving…</span>';
+
+    try {
+      const first   = document.getElementById('sFirst').value.trim();
+      const last    = document.getElementById('sLast').value.trim();
+      const display = document.getElementById('sDisplay').value.trim();
+      const bio     = document.getElementById('sBio').value.trim();
+      if (!first) {
+        showToast('First name is required', 'r');
+        btn.disabled = false;
+        btn.innerHTML = '<span>💾</span><span>Save All Selections</span>';
+        return;
+      }
+
+      const prefs = collectAllPrefs();
+
+      // Persist to localStorage
+      Object.entries(prefs).forEach(([k, v]) => localStorage.setItem('axion_' + k, v));
+
+      // Apply theme immediately
+      applyTheme(prefs.prefTheme);
+
+      // Save everything to Firestore
+      await updateDoc(doc(db, 'users', CU.uid), {
+        firstName: first,
+        lastName: last,
+        displayName: display,
+        bio: bio,
+        preferences: prefs,
+        updatedAt: serverTimestamp()
+      });
+
+      document.getElementById('uName').textContent = `${first} ${last}`.trim();
+      document.getElementById('uAvatar').textContent = (first[0] || '') + (last[0] || '');
+
+      showToast('All selections saved to your account', 'g');
+    } catch (e) {
+      console.error(e);
+      showToast('Could not save. Please try again.', 'r');
+    }
+
+    btn.disabled = false;
+    btn.innerHTML = '<span>💾</span><span>Save All Selections</span>';
+  };
+
+  window.saveProfile = async function() {
+    // Keep the individual button working too
+    await saveAllSelections();
+  };
+
+  function toggleDailyTime() {
+    const on = document.getElementById('notifDaily').checked;
+    document.getElementById('dailyTimeRow').style.display = on ? 'flex' : 'none';
+  }
+  document.getElementById('notifDaily')?.addEventListener('change', toggleDailyTime);
+
+  // Export / Import (same as before)
+  window.exportData = async function() {
+    if (!CU) return;
+    showToast('Preparing export…');
+    try {
+      const prefs = collectAllPrefs();
+      let trades = [];
+      try {
+        const tradesSnap = await getDocs(collection(db, 'users', CU.uid, 'trades'));
+        trades = tradesSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+      } catch (_) {}
+
+      const payload = {
+        exportedAt: new Date().toISOString(),
+        version: '1.1',
+        profile: {
+          firstName: userData.firstName,
+          lastName: userData.lastName,
+          displayName: userData.displayName,
+          bio: userData.bio,
+          email: CU.email,
+          points: userData.points,
+          streak: userData.streak
+        },
+        preferences: prefs,
+        trades
+      };
+
+      const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+      const url  = URL.createObjectURL(blob);
+      const a    = document.createElement('a');
+      a.href = url;
+      a.download = `axion-desk-export-${new Date().toISOString().slice(0,10)}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+      showToast('Export downloaded', 'g');
+    } catch (e) {
+      showToast('Export failed', 'r');
+    }
+  };
+
+  window.exportTradesCSV = async function() {
+    if (!CU) return;
+    showToast('Preparing CSV…');
+    try {
+      const tradesSnap = await getDocs(collection(db, 'users', CU.uid, 'trades'));
+      const trades = tradesSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+      if (!trades.length) { showToast('No trades to export', 'r'); return; }
+
+      const headers = ['id','symbol','type','side','entry','exit','qty','pnl','date','notes'];
+      const rows = trades.map(t => headers.map(h => `"${String(t[h]??'').replace(/"/g,'""')}"`).join(','));
+      const csv = [headers.join(','), ...rows].join('\n');
+      const blob = new Blob([csv], { type: 'text/csv' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `axion-trades-${new Date().toISOString().slice(0,10)}.csv`;
+      a.click();
+      URL.revokeObjectURL(url);
+      showToast('CSV downloaded', 'g');
+    } catch (e) {
+      showToast('CSV export failed', 'r');
+    }
+  };
+
+  window.importTrades = function(e) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    showToast('Import coming soon — ' + file.name);
+    e.target.value = '';
+  };
+
+  // Modals
+  window.doSignOut = function() {
+    closeSidebar();
+    document.getElementById('feedbackOverlay').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  };
+  window.closeFeedbackModal = async function(doLogout) {
+    document.getElementById('feedbackOverlay').classList.remove('open');
+    document.body.style.overflow = '';
+    if (doLogout) {
+      try { await signOut(auth); } catch (e) {}
+      window.location.href = 'login.html';
+    }
+  };
+
+  window.openDeleteModal = function() {
+    document.getElementById('deleteConfirm').value = '';
+    document.getElementById('btnConfirmDelete').disabled = true;
+    document.getElementById('deleteOverlay').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  };
+  window.closeDeleteModal = function() {
+    document.getElementById('deleteOverlay').classList.remove('open');
+    document.body.style.overflow = '';
+  };
+  document.getElementById('deleteConfirm')?.addEventListener('input', e => {
+    document.getElementById('btnConfirmDelete').disabled = e.target.value.trim() !== 'DELETE';
+  });
+  window.confirmDeleteAccount = async function() {
+    if (!CU || document.getElementById('deleteConfirm').value.trim() !== 'DELETE') return;
+    const btn = document.getElementById('btnConfirmDelete');
+    btn.disabled = true;
+    btn.textContent = 'Deleting…';
+    try {
+      await deleteDoc(doc(db, 'users', CU.uid));
+      await deleteUser(CU);
+      showToast('Account deleted', 'g');
+      setTimeout(() => window.location.href = 'login.html', 800);
+    } catch (e) {
+      showToast('Could not delete. You may need to re-authenticate.', 'r');
+      btn.disabled = false;
+      btn.textContent = 'Delete forever';
+    }
+  };
+
+  window.openTermsModal = function() {
+    document.getElementById('termsOverlay').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  };
+  window.closeTermsModal = function() {
+    document.getElementById('termsOverlay').classList.remove('open');
+    document.body.style.overflow = '';
+  };
+  window.openPrivacyModal = function() {
+    document.getElementById('privacyOverlay').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  };
+  window.closePrivacyModal = function() {
+    document.getElementById('privacyOverlay').classList.remove('open');
+    document.body.style.overflow = '';
+  };
+
+  window.showToast = function(msg, type = '') {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.className = `toast ${type} show`;
+    setTimeout(() => t.classList.remove('show'), 2800);
+  };
+
+  window.toggleSidebar = function() {
+    const sb = document.getElementById('sidebar');
+    const bd = document.getElementById('sidebarBackdrop');
+    const open = !sb.classList.contains('open');
+    sb.classList.toggle('open', open);
+    bd.classList.toggle('show', open);
+  };
+  window.closeSidebar = function() {
+    document.getElementById('sidebar').classList.remove('open');
+    document.getElementById('sidebarBackdrop').classList.remove('show');
+  };
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') {
+      closeFeedbackModal(false);
+      closeDeleteModal();
+      closeTermsModal();
+      closePrivacyModal();
+      closeSidebar();
+    }
+  });
+</script>
+</body>
+</html>
