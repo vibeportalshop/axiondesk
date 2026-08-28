@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>History — Axion Desk</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%2309090E'/%3E%3Cline x1='8' y1='25' x2='16' y2='8' stroke='%236B7FF0' stroke-width='2.6' stroke-linecap='round'/%3E%3Cline x1='24' y1='25' x2='16' y2='8' stroke='%236B7FF0' stroke-width='2.6' stroke-linecap='round'/%3E%3Cline x1='9.5' y1='25' x2='22.5' y2='25' stroke='%236B7FF0' stroke-width='2.6' stroke-linecap='round'/%3E%3Ccircle cx='16' cy='8' r='3' fill='%233DD68C'/%3E%3C/svg%3E"/>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root,[data-theme="dark"]{
+      --bg:#09090E;--surface:#111118;--elevated:#16161F;--border:#1F1F30;
+      --accent:#4F6EF7;--adim:rgba(79,110,247,0.1);
+      --text:#DDDDE8;--muted:#5A5A78;--faint:#2E2E46;
+      --green:#3DD68C;--red:#F75A5A;--yellow:#F7C948;--purple:#C896FF;
+      --fd:'Space Grotesk',sans-serif;--fb:'Inter',sans-serif;--fm:'JetBrains Mono',monospace;
+      --sw:220px;--shadow:0 12px 40px rgba(0,0,0,0.4);
+    }
+    [data-theme="light"]{
+      --bg:#F4F5F9;--surface:#FFFFFF;--elevated:#F0F1F6;--border:#E2E4ED;
+      --accent:#4F6EF7;--adim:rgba(79,110,247,0.08);
+      --text:#1A1A2E;--muted:#6B6B85;--faint:#C5C7D4;
+      --green:#16A34A;--red:#DC2626;--yellow:#D97706;--purple:#9333EA;
+      --shadow:0 12px 40px rgba(0,0,0,0.08);
+    }
+    html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--fb);font-size:14px;line-height:1.55;overflow:hidden}
+    ::-webkit-scrollbar{width:5px}::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+
+    .app{display:flex;height:100vh;overflow:hidden}
+    .sidebar{width:var(--sw);flex-shrink:0;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;padding:20px 12px;overflow-y:auto}
+    .sidebar-logo{display:flex;align-items:center;gap:8px;text-decoration:none;margin-bottom:28px;padding:0 6px}
+    .logo-text{font-family:var(--fd);font-size:.9rem;font-weight:700;color:var(--text);letter-spacing:-.02em}
+    .logo-text span{color:var(--accent)}
+    .nav-label{font-family:var(--fm);font-size:.55rem;color:var(--faint);text-transform:uppercase;letter-spacing:.1em;padding:0 8px;margin:18px 0 5px}
+    .nav-item{display:flex;align-items:center;gap:8px;padding:8px;border-radius:7px;text-decoration:none;color:var(--muted);font-size:.82rem;font-weight:500;transition:.15s;cursor:pointer;border:none;background:none;width:100%;text-align:left}
+    .nav-item:hover{background:var(--elevated);color:var(--text)}
+    .nav-item.active{background:var(--adim);color:var(--accent)}
+    .nav-icon{width:16px;height:16px;flex-shrink:0;opacity:.9}
+    .sidebar-spacer{flex:1}
+    .pts-badge{background:var(--elevated);border:1px solid var(--border);border-radius:9px;padding:11px 13px;margin-bottom:10px}
+    .pts-label{font-family:var(--fm);font-size:.55rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:3px}
+    .pts-val{font-family:var(--fm);font-size:1rem;font-weight:600;color:var(--yellow)}
+    .pts-streak{font-family:var(--fm);font-size:.6rem;color:var(--muted);margin-top:2px}
+    .user-pill{display:flex;align-items:center;gap:9px;padding:9px;border-radius:9px;border:1px solid var(--border);background:var(--elevated)}
+    .u-avatar{width:28px;height:28px;border-radius:50%;background:var(--adim);border:1px solid rgba(79,110,247,.3);display:flex;align-items:center;justify-content:center;font-family:var(--fd);font-size:.65rem;font-weight:700;color:var(--accent)}
+    .u-name{font-size:.78rem;font-weight:500}
+    .u-email{font-family:var(--fm);font-size:.58rem;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:130px}
+
+    .main{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0}
+    .topbar{display:flex;align-items:center;justify-content:space-between;padding:13px 22px;border-bottom:1px solid var(--border);background:var(--surface);gap:12px;flex-shrink:0;flex-wrap:wrap}
+    .page-title{font-family:var(--fd);font-size:1.05rem;font-weight:700;letter-spacing:-.02em}
+    .page-sub{font-family:var(--fm);font-size:.6rem;color:var(--muted);margin-top:1px}
+    .btn-hamburger{display:none;width:36px;height:36px;border-radius:8px;border:1px solid var(--border);background:var(--elevated);color:var(--text);cursor:pointer;font-size:1.1rem}
+    .sidebar-backdrop{display:none;position:fixed;inset:0;background:rgba(9,9,14,.55);z-index:90;opacity:0;transition:opacity .2s;pointer-events:none}
+    .sidebar-backdrop.show{opacity:1;pointer-events:all}
+
+    .range-tabs{display:flex;gap:1px;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:2px}
+    .range-btn{padding:6px 14px;border-radius:6px;font-family:var(--fm);font-size:.65rem;letter-spacing:.05em;text-transform:uppercase;border:none;cursor:pointer;background:none;color:var(--muted);transition:all .15s}
+    .range-btn.active{background:var(--surface);color:var(--text);box-shadow:0 1px 3px rgba(0,0,0,.25)}
+
+    .period-nav{display:flex;align-items:center;gap:8px}
+    .nav-arrow{width:32px;height:32px;border-radius:8px;border:1px solid var(--border);background:var(--elevated);color:var(--text);cursor:pointer;display:inline-flex;align-items:center;justify-content:center}
+    .nav-arrow:hover{border-color:var(--faint)}
+    .nav-arrow svg{width:16px;height:16px}
+    .period-label{font-family:var(--fd);font-size:.95rem;font-weight:600;min-width:160px;text-align:center;letter-spacing:-.02em}
+
+    .scroll{flex:1;overflow-y:auto;padding:20px 22px}
+    .layout{display:grid;grid-template-columns:1fr 340px;gap:18px;align-items:start}
+    @media(max-width:1100px){.layout{grid-template-columns:1fr}}
+
+    .stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px}
+    @media(max-width:700px){.stats-row{grid-template-columns:1fr 1fr}}
+    .stat-card{background:var(--surface);border:1px solid var(--border);border-radius:11px;padding:14px 16px}
+    .sc-label{font-family:var(--fm);font-size:.55rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:5px}
+    .sc-val{font-family:var(--fm);font-size:1.15rem;font-weight:600;letter-spacing:-.02em}
+    .sc-val.g{color:var(--green)}.sc-val.r{color:var(--red)}.sc-val.y{color:var(--yellow)}
+    .sc-sub{font-family:var(--fm);font-size:.58rem;color:var(--faint);margin-top:3px}
+
+    .card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:18px}
+    .card-h{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;gap:10px;flex-wrap:wrap}
+    .card-title{font-family:var(--fd);font-size:.9rem;font-weight:600;letter-spacing:-.01em}
+    .card-meta{font-family:var(--fm);font-size:.6rem;color:var(--faint)}
+
+    /* Calendar */
+    .cal-weekdays{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:6px}
+    .cal-wd{font-family:var(--fm);font-size:.55rem;color:var(--faint);text-align:center;text-transform:uppercase}
+    .cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
+    .cal-cell{
+      min-height:64px;border-radius:8px;border:1px solid transparent;
+      background:var(--elevated);padding:6px 7px;cursor:pointer;
+      display:flex;flex-direction:column;justify-content:space-between;
+      transition:transform .12s,border-color .12s;
+    }
+    .cal-cell:hover{transform:scale(1.03);z-index:2;border-color:var(--faint)}
+    .cal-cell.empty{background:transparent;cursor:default;pointer-events:none}
+    .cal-cell.outside{opacity:.35}
+    .cal-cell.today{border-color:var(--accent)}
+    .cal-day{font-family:var(--fm);font-size:.65rem;color:var(--muted)}
+    .cal-pnl{font-family:var(--fm);font-size:.72rem;font-weight:600;letter-spacing:-.02em}
+    .cal-count{font-family:var(--fm);font-size:.52rem;color:var(--faint)}
+
+    /* Year grid: months as mini blocks */
+    .year-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+    @media(max-width:800px){.year-grid{grid-template-columns:repeat(2,1fr)}}
+    .year-month{background:var(--elevated);border:1px solid var(--border);border-radius:10px;padding:12px;cursor:pointer;transition:border-color .15s}
+    .year-month:hover{border-color:var(--faint)}
+    .ym-name{font-family:var(--fd);font-size:.78rem;font-weight:600;margin-bottom:8px}
+    .ym-mini{display:grid;grid-template-columns:repeat(7,1fr);gap:2px}
+    .ym-dot{height:8px;border-radius:2px;background:var(--border)}
+    .ym-pnl{font-family:var(--fm);font-size:.7rem;font-weight:600;margin-top:8px}
+
+    .legend{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:12px}
+    .leg-label{font-family:var(--fm);font-size:.55rem;color:var(--muted)}
+    .leg-bar{display:flex;height:10px;border-radius:3px;overflow:hidden;width:120px}
+    .leg-bar span{flex:1}
+
+    #perfCanvas{width:100%;height:180px;display:block}
+    .side-stack{display:flex;flex-direction:column;gap:14px}
+
+    .ai-box{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:10px}
+    .ai-head{display:flex;align-items:center;gap:8px;font-family:var(--fd);font-size:.88rem;font-weight:600}
+    .ai-dot{width:6px;height:6px;border-radius:50%;background:var(--green);animation:pulse 2s infinite}
+    @keyframes pulse{0%,100%{opacity:.4}50%{opacity:1}}
+    .ai-body{font-size:.84rem;color:var(--muted);line-height:1.65;white-space:pre-wrap;max-height:280px;overflow-y:auto}
+    .ai-actions{display:flex;gap:8px;flex-wrap:wrap}
+    .btn-ai-run{padding:8px 14px;border-radius:8px;background:var(--accent);color:#fff;border:none;font-family:var(--fb);font-size:.78rem;font-weight:600;cursor:pointer}
+    .btn-ai-run:hover{opacity:.9}
+    .btn-ghost{padding:8px 12px;border-radius:8px;border:1px solid var(--border);background:none;color:var(--muted);font-size:.75rem;cursor:pointer}
+    .btn-ghost:hover{color:var(--text)}
+
+    .day-detail{background:var(--elevated);border:1px solid var(--border);border-radius:10px;padding:12px;font-size:.8rem}
+    .day-detail h4{font-family:var(--fd);font-size:.85rem;margin-bottom:6px}
+    .day-detail .muted{color:var(--muted);font-size:.78rem;line-height:1.5}
+    .btn-open-desk{margin-top:10px;display:inline-flex;padding:7px 12px;border-radius:7px;background:var(--adim);border:1px solid rgba(79,110,247,.3);color:var(--accent);font-family:var(--fm);font-size:.65rem;text-decoration:none;cursor:pointer}
+
+    .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(16px);background:var(--elevated);border:1px solid var(--border);border-radius:9px;padding:10px 18px;font-family:var(--fm);font-size:.72rem;opacity:0;transition:.2s;z-index:300;pointer-events:none}
+    .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+    .toast.g{color:var(--green)}.toast.r{color:var(--red)}
+
+    .loading{font-family:var(--fm);font-size:.7rem;color:var(--muted);padding:20px;text-align:center}
+
+    @media(max-width:900px){
+      .sidebar{position:fixed;top:0;left:0;bottom:0;z-index:95;width:min(280px,85vw);transform:translateX(-105%);transition:transform .28s;box-shadow:8px 0 24px rgba(0,0,0,.4)}
+      .sidebar.open{transform:translateX(0)}
+      .sidebar-backdrop{display:block}
+      .btn-hamburger{display:flex}
+      .scroll{padding:14px}
+      .cal-cell{min-height:52px}
+    }
+  </style>
+</head>
+<body>
+<script>(function(){var t=localStorage.getItem('axion_prefTheme')||'dark';document.documentElement.setAttribute('data-theme',t);})();</script>
+<div class="app">
+  <div class="sidebar-backdrop" id="sidebarBackdrop" onclick="closeSidebar()"></div>
+  <aside class="sidebar" id="sidebar">
+    <a href="desk.html" class="sidebar-logo">
+      <svg width="26" height="26" viewBox="0 0 40 40" fill="none"><rect width="40" height="40" rx="10" fill="#09090E"/><ellipse cx="20" cy="30" rx="16" ry="6" stroke="#2A2A50" stroke-width=".7" fill="none"/><ellipse cx="20" cy="30" rx="11" ry="4" stroke="#2A2A50" stroke-width=".7" fill="none"/><ellipse cx="20" cy="30" rx="6" ry="2" stroke="#2A2A50" stroke-width=".7" fill="none"/><line x1="20" y1="10" x2="9" y2="31" stroke="#6B7FF0" stroke-width="3.2" stroke-linecap="round"/><line x1="20" y1="10" x2="31" y2="31" stroke="#6B7FF0" stroke-width="3.2" stroke-linecap="round"/><line x1="10" y1="31" x2="30" y2="31" stroke="#6B7FF0" stroke-width="3.2" stroke-linecap="round"/><circle cx="20" cy="10" r="4" fill="#3DD68C"/></svg>
+      <span class="logo-text">Axion<span>Desk</span></span>
+    </a>
+    <span class="nav-label">My Desk</span>
+    <a href="desk.html" class="nav-item"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 01-1 1H4a1 1 0 01-1-1V9.5z"/><path d="M9 21V12h6v9"/></svg>Overview</a>
+    <a href="desk.html#section-trades" class="nav-item"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg>Trade Log</a>
+    <a href="desk.html#section-strategies" class="nav-item"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>Strategies</a>
+    <a href="desk.html#section-markets" class="nav-item"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M7 14l4-4 4 4 5-6"/></svg>Markets</a>
+    <a href="news.html" class="nav-item"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 22h16a2 2 0 002-2V4a2 2 0 00-2-2H8a2 2 0 00-2 2v16a2 2 0 01-2 2zm0 0a2 2 0 01-2-2v-9c0-1.1.9-2 2-2h2"/><path d="M18 14h-8M15 18h-5M10 6h8v4h-8V6z"/></svg>News</a>
+        <button class="nav-item" onclick="switchTab('review')"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>Review</button> 
+    <span class="nav-label">Trade History</span>
+    <a href="history.html" class="nav-item active"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>History</a>
+    <span class="nav-label">Community</span>
+    <a href="floor.html" class="nav-item"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>The Floor</a>
+    <span class="nav-label">Account</span>
+    <a href="settings.html" class="nav-item"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>Settings</a>
+    <button class="nav-item" onclick="doSignOut()"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>Sign out</button>
+    <div class="sidebar-spacer"></div>
+    <div class="pts-badge">
+      <p class="pts-label">Axion Points</p>
+      <p class="pts-val" id="sidebarPts">—</p>
+      <p class="pts-streak" id="sidebarStreak">—</p>
+    </div>
+    <div class="user-pill">
+      <div class="u-avatar" id="uAvatar">?</div>
+      <div style="min-width:0">
+        <p class="u-name" id="uName">Loading…</p>
+        <p class="u-email" id="uEmail">—</p>
+      </div>
+    </div>
+  </aside>
+
+  <div class="main">
+    <div class="topbar">
+      <button class="btn-hamburger" onclick="toggleSidebar()">≡</button>
+      <div>
+        <div class="page-title">History</div>
+        <div class="page-sub">Calendar · equity curve · AI review</div>
+      </div>
+      <div class="range-tabs">
+        <button class="range-btn active" data-range="week" onclick="setRange('week')">Weekly</button>
+        <button class="range-btn" data-range="month" onclick="setRange('month')">Monthly</button>
+        <button class="range-btn" data-range="year" onclick="setRange('year')">Yearly</button>
+      </div>
+      <div class="period-nav">
+        <button class="nav-arrow" onclick="shiftPeriod(-1)" aria-label="Previous">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+        </button>
+        <div class="period-label" id="periodLabel">—</div>
+        <button class="nav-arrow" onclick="shiftPeriod(1)" aria-label="Next">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <div class="scroll">
+      <div class="stats-row">
+        <div class="stat-card"><p class="sc-label">Period P&amp;L</p><p class="sc-val" id="sPnl">—</p><p class="sc-sub" id="sPnlSub">selected range</p></div>
+        <div class="stat-card"><p class="sc-label">Win rate</p><p class="sc-val" id="sWr">—</p><p class="sc-sub" id="sWrSub">winning days</p></div>
+        <div class="stat-card"><p class="sc-label">Best day</p><p class="sc-val g" id="sBest">—</p><p class="sc-sub" id="sBestSub">—</p></div>
+        <div class="stat-card"><p class="sc-label">Worst day</p><p class="sc-val r" id="sWorst">—</p><p class="sc-sub" id="sWorstSub">—</p></div>
+      </div>
+
+      <div class="layout">
+        <div>
+          <div class="card">
+            <div class="card-h">
+              <span class="card-title" id="calTitle">Calendar</span>
+              <span class="card-meta" id="calMeta">P&amp;L by day · click a cell for details</span>
+            </div>
+            <div id="calendarRoot"><div class="loading">Loading history…</div></div>
+            <div class="legend">
+              <span class="leg-label">Loss</span>
+              <div class="leg-bar">
+                <span style="background:rgba(247,90,90,0.85)"></span>
+                <span style="background:rgba(247,90,90,0.45)"></span>
+                <span style="background:var(--elevated)"></span>
+                <span style="background:rgba(61,214,140,0.4)"></span>
+                <span style="background:rgba(61,214,140,0.85)"></span>
+              </div>
+              <span class="leg-label">Profit</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="side-stack">
+          <div class="card">
+            <div class="card-h">
+              <span class="card-title">Equity curve</span>
+              <span class="card-meta" id="curveMeta">Cumulative P&amp;L</span>
+            </div>
+            <canvas id="perfCanvas"></canvas>
+          </div>
+
+          <div class="ai-box">
+            <div class="ai-head"><span class="ai-dot"></span> Axion AI review</div>
+            <div class="ai-body" id="aiBody">Select a period, then run analysis. I’ll look at your calendar, equity path, and day-level patterns — what worked, what slipped, and one concrete focus for the next stretch.</div>
+            <div class="ai-actions">
+              <button class="btn-ai-run" onclick="runAIReview()">Analyse this period</button>
+              <button class="btn-ghost" onclick="runAIReview('mistakes')">Show mistakes</button>
+              <button class="btn-ghost" onclick="runAIReview('motivate')">Motivate me</button>
+            </div>
+          </div>
+
+          <div class="card" id="dayDetailCard" style="display:none">
+            <div class="day-detail">
+              <h4 id="ddTitle">Day</h4>
+              <div class="muted" id="ddBody"></div>
+              <a class="btn-open-desk" id="ddLink" href="desk.html">Open in Desk</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+  import { getFirestore, doc, getDoc, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyCulaEKuCWd65B739Kb3nTY7ujv70WoyG0",
+    authDomain: "axion-desk.firebaseapp.com",
+    projectId: "axion-desk",
+    storageBucket: "axion-desk.firebasestorage.app",
+    messagingSenderId: "493322474720",
+    appId: "1:493322474720:web:ea6de0e979ef9a61a62c85"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+
+  let CU = null;
+  let range = 'month'; // week | month | year
+  let anchor = new Date(); // reference date inside the visible period
+  /** @type {Record<string, {pnl:number, trades:number, wins:number}>} */
+  let dayMap = {};
+  let periodKeys = [];
+
+  const pad = n => String(n).padStart(2,'0');
+  const toKey = d => `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+  const parseKey = key => {
+    const [y,m,d] = key.split('-').map(Number);
+    return new Date(y, m-1, d);
+  };
+  const startOfWeek = d => {
+    const x = new Date(d); const day = (x.getDay()+6)%7; x.setDate(x.getDate()-day); x.setHours(0,0,0,0); return x;
+  };
+  const addDays = (d,n) => { const x=new Date(d); x.setDate(x.getDate()+n); return x; };
+  const fmtINR = n => (n>=0?'+':'') + '₹' + Math.abs(Math.round(n)).toLocaleString('en-IN');
+
+  onAuthStateChanged(auth, async user => {
+    if (!user) { location.href = 'login.html'; return; }
+    CU = user;
+    const snap = await getDoc(doc(db, 'users', user.uid));
+    if (!snap.exists() || !snap.data().termsAccepted) { location.href = 't&c.html'; return; }
+    const d = snap.data();
+    const initials = (d.firstName?.[0]||'') + (d.lastName?.[0]||'');
+    document.getElementById('uAvatar').textContent = initials || '?';
+    document.getElementById('uName').textContent = `${d.firstName||''} ${d.lastName||''}`.trim() || 'Trader';
+    document.getElementById('uEmail').textContent = user.email || '—';
+    document.getElementById('sidebarPts').textContent = (d.points||0).toLocaleString('en-IN') + ' pts';
+    document.getElementById('sidebarStreak').textContent = (d.streak||0) + ' day streak';
+    await refresh();
+  });
+
+  function periodBounds() {
+    if (range === 'week') {
+      const start = startOfWeek(anchor);
+      const keys = [];
+      for (let i=0;i<7;i++) keys.push(toKey(addDays(start,i)));
+      return { keys, label: `Week of ${start.toLocaleDateString('en-IN',{day:'numeric',month:'short'})}` };
+    }
+    if (range === 'year') {
+      const y = anchor.getFullYear();
+      const keys = [];
+      const start = new Date(y,0,1);
+      const end = new Date(y,11,31);
+      for (let d=new Date(start); d<=end; d.setDate(d.getDate()+1)) keys.push(toKey(d));
+      return { keys, label: String(y) };
+    }
+    // month
+    const y = anchor.getFullYear(), m = anchor.getMonth();
+    const start = new Date(y,m,1);
+    const end = new Date(y,m+1,0);
+    const keys = [];
+    for (let d=1; d<=end.getDate(); d++) keys.push(toKey(new Date(y,m,d)));
+    return {
+      keys,
+      label: start.toLocaleDateString('en-IN',{month:'long', year:'numeric'})
+    };
+  }
+
+  async function loadDays(keys) {
+    const map = {};
+    // Batch by unique keys - sequential is safer for free tier
+    await Promise.all(keys.map(async key => {
+      try {
+        const snap = await getDocs(collection(db, 'users', CU.uid, 'desk', key, 'trades'));
+        if (snap.empty) return;
+        let pnl = 0, wins = 0;
+        snap.forEach(docu => {
+          const p = docu.data().pnl || 0;
+          pnl += p;
+          if (p > 0) wins++;
+        });
+        map[key] = { pnl, trades: snap.size, wins };
+      } catch (e) { /* day may not exist */ }
+    }));
+    return map;
+  }
+
+  async function refresh() {
+    const root = document.getElementById('calendarRoot');
+    root.innerHTML = '<div class="loading">Loading history…</div>';
+    const { keys, label } = periodBounds();
+    periodKeys = keys;
+    document.getElementById('periodLabel').textContent = label;
+    dayMap = await loadDays(keys);
+    renderCalendar();
+    renderStats();
+    drawCurve();
+    document.getElementById('aiBody').textContent = 'Period loaded. Run analysis when you’re ready — I’ll use only your logged days in this range.';
+  }
+
+  function colorForPnl(pnl, maxAbs) {
+    if (!pnl || maxAbs <= 0) return 'var(--elevated)';
+    const t = Math.min(1, Math.abs(pnl) / maxAbs);
+    if (pnl > 0) {
+      const a = 0.25 + t * 0.6;
+      return `rgba(61,214,140,${a.toFixed(2)})`;
+    }
+    const a = 0.25 + t * 0.6;
+    return `rgba(247,90,90,${a.toFixed(2)})`;
+  }
+
+  function maxAbsInMap() {
+    let m = 0;
+    Object.values(dayMap).forEach(v => { m = Math.max(m, Math.abs(v.pnl)); });
+    return m || 1;
+  }
+
+  function renderCalendar() {
+    const root = document.getElementById('calendarRoot');
+    const maxA = maxAbsInMap();
+    const today = toKey(new Date());
+
+    if (range === 'year') {
+      document.getElementById('calTitle').textContent = 'Year at a glance';
+      document.getElementById('calMeta').textContent = 'Each month · click to open that month';
+      const y = anchor.getFullYear();
+      let html = '<div class="year-grid">';
+      for (let m=0;m<12;m++) {
+        const name = new Date(y,m,1).toLocaleDateString('en-IN',{month:'short'});
+        const daysIn = new Date(y,m+1,0).getDate();
+        let mp = 0, dots = '';
+        // pad to Monday
+        const first = new Date(y,m,1);
+        const padN = (first.getDay()+6)%7;
+        for (let i=0;i<padN;i++) dots += '<div class="ym-dot" style="background:transparent"></div>';
+        for (let d=1;d<=daysIn;d++) {
+          const key = toKey(new Date(y,m,d));
+          const cell = dayMap[key];
+          const pnl = cell ? cell.pnl : 0;
+          if (cell) mp += cell.pnl;
+          const bg = cell ? colorForPnl(pnl, maxA) : 'var(--border)';
+          dots += `<div class="ym-dot" style="background:${bg}"></div>`;
+        }
+        const cls = mp>0?'g':mp<0?'r':'';
+        html += `<div class="year-month" onclick="openMonth(${y},${m})">
+          <div class="ym-name">${name}</div>
+          <div class="ym-mini">${dots}</div>
+          <div class="ym-pnl ${cls}" style="color:${mp>0?'var(--green)':mp<0?'var(--red)':'var(--muted)'}">${cellCountMonth(y,m)?fmtINR(mp):'—'}</div>
+        </div>`;
+      }
+      html += '</div>';
+      root.innerHTML = html;
+      return;
+    }
+
+    document.getElementById('calTitle').textContent = range === 'week' ? 'Week calendar' : 'Month calendar';
+    document.getElementById('calMeta').textContent = 'Colour = day P&L intensity · click for detail';
+
+    const weekdays = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+    let html = '<div class="cal-weekdays">' + weekdays.map(w=>`<div class="cal-wd">${w}</div>`).join('') + '</div><div class="cal-grid">';
+
+    if (range === 'week') {
+      periodKeys.forEach(key => {
+        html += cellHtml(key, maxA, today);
+      });
+    } else {
+      const first = parseKey(periodKeys[0]);
+      const padN = (first.getDay()+6)%7;
+      for (let i=0;i<padN;i++) html += '<div class="cal-cell empty"></div>';
+      periodKeys.forEach(key => { html += cellHtml(key, maxA, today); });
+    }
+    html += '</div>';
+    root.innerHTML = html;
+  }
+
+  function cellCountMonth(y,m) {
+    const daysIn = new Date(y,m+1,0).getDate();
+    for (let d=1;d<=daysIn;d++) if (dayMap[toKey(new Date(y,m,d))]) return true;
+    return false;
+  }
+
+  function cellHtml(key, maxA, today) {
+    const cell = dayMap[key];
+    const d = parseKey(key);
+    const dayNum = d.getDate();
+    const bg = cell ? colorForPnl(cell.pnl, maxA) : 'var(--elevated)';
+    const pnlTxt = cell ? fmtINR(cell.pnl) : '';
+    const pnlColor = cell ? (cell.pnl>=0 ? 'var(--green)' : 'var(--red)') : 'var(--faint)';
+    const todayCls = key === today ? ' today' : '';
+    return `<div class="cal-cell${todayCls}" style="background:${bg}" onclick="selectDay('${key}')">
+      <span class="cal-day">${dayNum}</span>
+      <span class="cal-pnl" style="color:${pnlColor}">${pnlTxt}</span>
+      <span class="cal-count">${cell ? cell.trades + ' trade' + (cell.trades!==1?'s':'') : ''}</span>
+    </div>`;
+  }
+
+  function renderStats() {
+    let total = 0, winDays = 0, lossDays = 0, tradedDays = 0;
+    let best = null, worst = null, bestK = '', worstK = '';
+    periodKeys.forEach(k => {
+      const c = dayMap[k];
+      if (!c) return;
+      tradedDays++;
+      total += c.pnl;
+      if (c.pnl > 0) winDays++;
+      if (c.pnl < 0) lossDays++;
+      if (best === null || c.pnl > best) { best = c.pnl; bestK = k; }
+      if (worst === null || c.pnl < worst) { worst = c.pnl; worstK = k; }
+    });
+
+    const pEl = document.getElementById('sPnl');
+    pEl.textContent = tradedDays ? fmtINR(total) : '—';
+    pEl.className = 'sc-val ' + (total>0?'g':total<0?'r':'');
+    document.getElementById('sPnlSub').textContent = tradedDays + ' day' + (tradedDays!==1?'s':'') + ' with trades';
+
+    const wr = tradedDays ? Math.round(winDays / tradedDays * 100) : null;
+    const wEl = document.getElementById('sWr');
+    wEl.textContent = wr !== null ? wr + '%' : '—';
+    wEl.className = 'sc-val ' + (wr===null?'': wr>=50?'g':'r');
+    document.getElementById('sWrSub').textContent = winDays + 'W / ' + lossDays + 'L days';
+
+    document.getElementById('sBest').textContent = best !== null ? fmtINR(best) : '—';
+    document.getElementById('sBestSub').textContent = bestK || '—';
+    document.getElementById('sWorst').textContent = worst !== null ? fmtINR(worst) : '—';
+    document.getElementById('sWorstSub').textContent = worstK || '—';
+  }
+
+  function drawCurve() {
+    const canvas = document.getElementById('perfCanvas');
+    const ctx = canvas.getContext('2d');
+    const W = canvas.offsetWidth || 300;
+    const H = 180;
+    canvas.width = W * 2; canvas.height = H * 2; ctx.scale(2,2);
+    ctx.clearRect(0,0,W,H);
+
+    const pts = [0];
+    let cum = 0;
+    const labels = [];
+    periodKeys.forEach(k => {
+      const c = dayMap[k];
+      if (c) { cum += c.pnl; labels.push(k); pts.push(cum); }
+    });
+
+    document.getElementById('curveMeta').textContent = pts.length > 1
+      ? `End ${fmtINR(cum)} · ${pts.length-1} sessions`
+      : 'No sessions in this range';
+
+    if (pts.length < 2) {
+      ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--faint') || '#2E2E46';
+      ctx.font = '12px JetBrains Mono, monospace';
+      ctx.fillText('Log trades to see the curve', 16, H/2);
+      return;
+    }
+
+    const minV = Math.min(...pts), maxV = Math.max(...pts);
+    const rangeV = maxV - minV || 1;
+    const xs = pts.map((_,i) => i/(pts.length-1)*(W-24)+12);
+    const ys = pts.map(v => H-16 - (v-minV)/rangeV*(H-32));
+
+    // zero line
+    if (minV < 0 && maxV > 0) {
+      const zy = H-16 - (0-minV)/rangeV*(H-32);
+      ctx.strokeStyle = 'rgba(90,90,120,0.4)';
+      ctx.setLineDash([4,4]);
+      ctx.beginPath(); ctx.moveTo(12, zy); ctx.lineTo(W-12, zy); ctx.stroke();
+      ctx.setLineDash([]);
+    }
+
+    const grad = ctx.createLinearGradient(0,0,0,H);
+    const positive = cum >= 0;
+    grad.addColorStop(0, positive ? 'rgba(61,214,140,0.25)' : 'rgba(247,90,90,0.25)');
+    grad.addColorStop(1, 'rgba(0,0,0,0)');
+    ctx.beginPath(); ctx.moveTo(xs[0], ys[0]);
+    for (let i=1;i<pts.length;i++) ctx.lineTo(xs[i], ys[i]);
+    ctx.lineTo(xs[xs.length-1], H); ctx.lineTo(xs[0], H); ctx.closePath();
+    ctx.fillStyle = grad; ctx.fill();
+
+    ctx.beginPath(); ctx.moveTo(xs[0], ys[0]);
+    for (let i=1;i<pts.length;i++) ctx.lineTo(xs[i], ys[i]);
+    ctx.strokeStyle = positive ? '#3DD68C' : '#F75A5A';
+    ctx.lineWidth = 2; ctx.stroke();
+
+    ctx.beginPath();
+    ctx.arc(xs[xs.length-1], ys[ys.length-1], 3.5, 0, Math.PI*2);
+    ctx.fillStyle = positive ? '#3DD68C' : '#F75A5A';
+    ctx.fill();
+  }
+
+  window.selectDay = function(key) {
+    const c = dayMap[key];
+    const card = document.getElementById('dayDetailCard');
+    card.style.display = 'block';
+    document.getElementById('ddTitle').textContent = parseKey(key).toLocaleDateString('en-IN',{weekday:'long', day:'numeric', month:'long', year:'numeric'});
+    if (!c) {
+      document.getElementById('ddBody').textContent = 'No trades logged on this day.';
+    } else {
+      document.getElementById('ddBody').innerHTML =
+        `P&amp;L <strong style="color:${c.pnl>=0?'var(--green)':'var(--red)'}">${fmtINR(c.pnl)}</strong><br/>` +
+        `${c.trades} trade${c.trades!==1?'s':''} · ${c.wins} winner${c.wins!==1?'s':''}`;
+    }
+    // Desk can open via hash; user can navigate with history date when we add ?date=
+    document.getElementById('ddLink').href = 'desk.html';
+    document.getElementById('ddLink').onclick = (e) => {
+      try { localStorage.setItem('axion_jump_date', key); } catch(_){}
+    };
+  };
+
+  window.openMonth = function(y, m) {
+    range = 'month';
+    anchor = new Date(y, m, 1);
+    document.querySelectorAll('.range-btn').forEach(b => b.classList.toggle('active', b.dataset.range === 'month'));
+    refresh();
+  };
+
+  window.setRange = function(r) {
+    range = r;
+    document.querySelectorAll('.range-btn').forEach(b => b.classList.toggle('active', b.dataset.range === r));
+    refresh();
+  };
+
+  window.shiftPeriod = function(dir) {
+    if (range === 'week') anchor = addDays(anchor, dir * 7);
+    else if (range === 'month') anchor = new Date(anchor.getFullYear(), anchor.getMonth() + dir, 1);
+    else anchor = new Date(anchor.getFullYear() + dir, anchor.getMonth(), 1);
+    // don't force future lock for viewing empty future - optional
+    refresh();
+  };
+
+  function buildSummary() {
+    let total = 0, winDays = 0, lossDays = 0, traded = 0, flat = 0;
+    let best = null, worst = null, bestK = '', worstK = '';
+    let greenStreak = 0, maxGreen = 0, redStreak = 0, maxRed = 0;
+    periodKeys.forEach(k => {
+      const c = dayMap[k];
+      if (!c) { greenStreak = 0; redStreak = 0; return; }
+      traded++;
+      total += c.pnl;
+      if (c.pnl > 0) { winDays++; greenStreak++; redStreak = 0; maxGreen = Math.max(maxGreen, greenStreak); }
+      else if (c.pnl < 0) { lossDays++; redStreak++; greenStreak = 0; maxRed = Math.max(maxRed, redStreak); }
+      else { flat++; greenStreak = 0; redStreak = 0; }
+      if (best === null || c.pnl > best) { best = c.pnl; bestK = k; }
+      if (worst === null || c.pnl < worst) { worst = c.pnl; worstK = k; }
+    });
+    return { total, winDays, lossDays, traded, flat, best, worst, bestK, worstK, maxGreen, maxRed };
+  }
+
+  window.runAIReview = function(mode) {
+    const s = buildSummary();
+    const label = document.getElementById('periodLabel').textContent;
+    const body = document.getElementById('aiBody');
+
+    if (!s.traded) {
+      body.textContent = `No trades in ${label}. There’s nothing to grade yet — log a few honest sessions in Desk, then come back. The calendar only works with real data.`;
+      return;
+    }
+
+    const wr = Math.round(s.winDays / s.traded * 100);
+    let text = '';
+
+    if (mode === 'motivate') {
+      text = `Period: ${label}\n\n`;
+      if (s.total >= 0) {
+        text += `You’re net positive over this stretch (${fmtINR(s.total)}). That isn’t luck if the process is clean — protect the habits that produced the green days.\n\n`;
+      } else {
+        text += `This range is net negative (${fmtINR(s.total)}). Hard stretches are where journals earn their keep. The goal isn’t a perfect month — it’s fewer repeated leaks.\n\n`;
+      }
+      text += `You showed up on ${s.traded} day${s.traded!==1?'s':''}. Consistency is already a skill.\n`;
+      if (s.maxGreen >= 2) text += `Longest green run: ${s.maxGreen} days — remember what you did differently then.\n`;
+      text += `\nOne focus for the next period: write one rule you will not break, and measure only that.`;
+    } else if (mode === 'mistakes') {
+      text = `Mistake lens — ${label}\n\n`;
+      if (s.lossDays > s.winDays) text += `• More red days than green (${s.lossDays} vs ${s.winDays}). The edge may be fine but frequency of off-plan days is high.\n`;
+      if (s.worst !== null && s.worst < 0) text += `• Worst day: ${s.worstK} at ${fmtINR(s.worst)}. Open that day in Desk and read the notes — one sentence on what you’ll never repeat.\n`;
+      if (s.maxRed >= 2) text += `• Losing streak of ${s.maxRed} days. A hard stop after 2 red days would have capped damage.\n`;
+      if (wr < 45) text += `• Day win rate ${wr}% is low. Either size is too large on weak setups, or you’re trading through noise.\n`;
+      if (s.total < 0 && s.best !== null && s.best > 0) text += `• You still printed a best day of ${fmtINR(s.best)}. The skill exists — the leak is inconsistency, not total inability.\n`;
+      text += `\nPractical fix: max daily loss rule + no new trades after two consecutive losers. Review only the red days this week.`;
+    } else {
+      text = `Axion review — ${label}\n\n`;
+      text += `Net P&L: ${fmtINR(s.total)}\n`;
+      text += `Active days: ${s.traded} · Day win rate: ${wr}% (${s.winDays}W / ${s.lossDays}L)\n`;
+      if (s.best !== null) text += `Best: ${s.bestK} ${fmtINR(s.best)}\n`;
+      if (s.worst !== null) text += `Worst: ${s.worstK} ${fmtINR(s.worst)}\n`;
+      if (s.maxGreen) text += `Best green streak: ${s.maxGreen} day(s)\n`;
+      if (s.maxRed) text += `Worst red streak: ${s.maxRed} day(s)\n`;
+      text += `\n`;
+      if (s.total >= 0 && wr >= 50) {
+        text += `Read: solid stretch. Don’t inflate size just because the curve is up. The calendar rewards the same process tomorrow.\n`;
+      } else if (s.total >= 0 && wr < 50) {
+        text += `Read: green net with a weak day win rate — a few large winners may be carrying you. Check if losers are small by rule or by luck.\n`;
+      } else if (s.total < 0 && wr >= 50) {
+        text += `Read: more green days than red, but net is still down. Losers are larger than winners. Risk/reward and stop discipline need attention.\n`;
+      } else {
+        text += `Read: tough period. Shrink size, trade fewer, journal every loss the same day. Curve recovery starts with smaller holes.\n`;
+      }
+      text += `\nOpen your worst day in Desk, rewrite the lesson in one line, and pin that line to next week’s prep.`;
+    }
+
+    body.textContent = text;
+  };
+
+  window.doSignOut = async function() {
+    try { await signOut(auth); } catch(e) {}
+    location.href = 'login.html';
+  };
+  window.toggleSidebar = function() {
+    document.getElementById('sidebar').classList.toggle('open');
+    document.getElementById('sidebarBackdrop').classList.toggle('show');
+  };
+  window.closeSidebar = function() {
+    document.getElementById('sidebar').classList.remove('open');
+    document.getElementById('sidebarBackdrop').classList.remove('show');
+  };
+  window.showToast = function(msg, type='') {
+    const t = document.getElementById('toast');
+    t.textContent = msg; t.className = `toast ${type} show`;
+    setTimeout(() => t.classList.remove('show'), 2500);
+  };
+
+  window.addEventListener('resize', () => { drawCurve(); });
+</script>
+</body>
+</html>

@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>News — Axion Desk</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%2309090E'/%3E%3Cline x1='8' y1='25' x2='16' y2='8' stroke='%236B7FF0' stroke-width='2.6' stroke-linecap='round'/%3E%3Cline x1='24' y1='25' x2='16' y2='8' stroke='%236B7FF0' stroke-width='2.6' stroke-linecap='round'/%3E%3Cline x1='9.5' y1='25' x2='22.5' y2='25' stroke='%236B7FF0' stroke-width='2.6' stroke-linecap='round'/%3E%3Ccircle cx='16' cy='8' r='3' fill='%233DD68C'/%3E%3C/svg%3E"/>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root,[data-theme="dark"]{
+      --bg:#09090E;--surface:#111118;--elevated:#16161F;--border:#1F1F30;
+      --accent:#4F6EF7;--adim:rgba(79,110,247,0.1);
+      --text:#DDDDE8;--muted:#5A5A78;--faint:#2E2E46;
+      --green:#3DD68C;--red:#F75A5A;--yellow:#F7C948;
+      --fd:'Space Grotesk',sans-serif;--fb:'Inter',sans-serif;--fm:'JetBrains Mono',monospace;
+      --sw:220px;--shadow:0 12px 40px rgba(0,0,0,0.4);
+    }
+    [data-theme="light"]{
+      --bg:#F4F5F9;--surface:#FFFFFF;--elevated:#F0F1F6;--border:#E2E4ED;
+      --accent:#4F6EF7;--adim:rgba(79,110,247,0.08);
+      --text:#1A1A2E;--muted:#6B6B85;--faint:#C5C7D4;
+      --green:#16A34A;--red:#DC2626;--yellow:#D97706;
+      --shadow:0 12px 40px rgba(0,0,0,0.08);
+    }
+    html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--fb);font-size:14px;line-height:1.55;overflow:hidden}
+    ::-webkit-scrollbar{width:5px}::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+
+    .app{display:flex;height:100vh;overflow:hidden}
+    .sidebar{width:var(--sw);flex-shrink:0;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;padding:20px 12px;overflow-y:auto}
+    .sidebar-logo{display:flex;align-items:center;gap:8px;text-decoration:none;margin-bottom:28px;padding:0 6px}
+    .logo-text{font-family:var(--fd);font-size:.9rem;font-weight:700;color:var(--text);letter-spacing:-.02em}
+    .logo-text span{color:var(--accent)}
+    .nav-label{font-family:var(--fm);font-size:.55rem;color:var(--faint);text-transform:uppercase;letter-spacing:.1em;padding:0 8px;margin:18px 0 5px}
+    .nav-item{display:flex;align-items:center;gap:8px;padding:8px;border-radius:7px;text-decoration:none;color:var(--muted);font-size:.82rem;font-weight:500;transition:.15s;cursor:pointer;border:none;background:none;width:100%;text-align:left}
+    .nav-item:hover{background:var(--elevated);color:var(--text)}
+    .nav-item.active{background:var(--adim);color:var(--accent)}
+    .nav-icon{width:16px;height:16px;flex-shrink:0;opacity:.9}
+    .sidebar-spacer{flex:1}
+    .pts-badge{background:var(--elevated);border:1px solid var(--border);border-radius:9px;padding:11px 13px;margin-bottom:10px}
+    .pts-label{font-family:var(--fm);font-size:.55rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:3px}
+    .pts-val{font-family:var(--fm);font-size:1rem;font-weight:600;color:var(--yellow)}
+    .pts-streak{font-family:var(--fm);font-size:.6rem;color:var(--muted);margin-top:2px}
+    .user-pill{display:flex;align-items:center;gap:9px;padding:9px;border-radius:9px;border:1px solid var(--border);background:var(--elevated)}
+    .u-avatar{width:28px;height:28px;border-radius:50%;background:var(--adim);border:1px solid rgba(79,110,247,.3);display:flex;align-items:center;justify-content:center;font-family:var(--fd);font-size:.65rem;font-weight:700;color:var(--accent)}
+    .u-name{font-size:.78rem;font-weight:500}
+    .u-email{font-family:var(--fm);font-size:.58rem;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:130px}
+
+    .main{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0}
+    .topbar{display:flex;align-items:center;justify-content:space-between;padding:13px 22px;border-bottom:1px solid var(--border);background:var(--surface);gap:12px;flex-shrink:0}
+    .page-title{font-family:var(--fd);font-size:1.05rem;font-weight:700;letter-spacing:-.02em}
+    .page-sub{font-family:var(--fm);font-size:.6rem;color:var(--muted);margin-top:1px}
+    .btn-hamburger{display:none;width:36px;height:36px;border-radius:8px;border:1px solid var(--border);background:var(--elevated);color:var(--text);cursor:pointer;font-size:1.1rem}
+    .sidebar-backdrop{display:none;position:fixed;inset:0;background:rgba(9,9,14,.55);z-index:90;opacity:0;transition:opacity .2s;pointer-events:none}
+    .sidebar-backdrop.show{opacity:1;pointer-events:all}
+
+    .news-toolbar{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 22px;border-bottom:1px solid var(--border);background:var(--bg);flex-wrap:wrap}
+    .filter-bar{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none}
+    .filter-bar::-webkit-scrollbar{display:none}
+    .filter-chip{flex-shrink:0;padding:6px 14px;border-radius:99px;border:1px solid var(--border);background:var(--surface);font-size:.78rem;font-weight:500;color:var(--muted);cursor:pointer;transition:.15s}
+    .filter-chip:hover{color:var(--text)}
+    .filter-chip.active{background:var(--adim);border-color:var(--accent);color:var(--accent)}
+    .toolbar-right{display:flex;align-items:center;gap:10px}
+    .last-updated{font-family:var(--fm);font-size:.6rem;color:var(--muted)}
+    .btn-refresh{padding:7px 12px;border-radius:8px;border:1px solid var(--border);background:var(--surface);color:var(--muted);font-size:.75rem;cursor:pointer;display:inline-flex;align-items:center;gap:6px}
+    .btn-refresh:hover{color:var(--text);border-color:var(--faint)}
+    .btn-refresh svg{width:14px;height:14px}
+
+    .news-scroll{flex:1;overflow-y:auto;padding:20px 22px}
+    .news-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px}
+
+    .news-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;overflow:hidden;display:flex;flex-direction:column;transition:border-color .15s,box-shadow .15s;cursor:pointer}
+    .news-card:hover{border-color:var(--faint);box-shadow:var(--shadow)}
+    .news-img{width:100%;height:160px;object-fit:cover;background:var(--elevated);display:block}
+    .news-img.placeholder{display:flex;align-items:center;justify-content:center;color:var(--faint)}
+    .news-body{padding:16px 18px;display:flex;flex-direction:column;flex:1}
+    .news-meta{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px}
+    .news-source{font-family:var(--fm);font-size:.58rem;color:var(--accent);text-transform:uppercase;letter-spacing:.04em;font-weight:600}
+    .news-time{font-family:var(--fm);font-size:.58rem;color:var(--muted)}
+    .news-title{font-family:var(--fd);font-size:.95rem;font-weight:600;letter-spacing:-.02em;line-height:1.35;margin-bottom:8px;color:var(--text)}
+    .news-desc{font-size:.82rem;color:var(--muted);line-height:1.55;flex:1;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+    .news-link{margin-top:12px;font-family:var(--fm);font-size:.65rem;color:var(--accent);text-decoration:none}
+
+    .empty-state,.error-state{text-align:center;padding:60px 20px;color:var(--muted)}
+    .empty-state h3,.error-state h3{font-family:var(--fd);font-size:1.15rem;color:var(--text);margin-bottom:8px}
+    .skeleton{background:linear-gradient(90deg,var(--elevated) 25%,var(--border) 50%,var(--elevated) 75%);background-size:200% 100%;animation:shimmer 1.4s infinite;border-radius:14px;height:280px}
+    @keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+
+    .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(16px);background:var(--elevated);border:1px solid var(--border);border-radius:9px;padding:10px 18px;font-family:var(--fm);font-size:.72rem;opacity:0;transition:.2s;z-index:300;pointer-events:none}
+    .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+    .toast.g{color:var(--green)}.toast.r{color:var(--red)}
+
+    @media(max-width:900px){
+      .sidebar{position:fixed;top:0;left:0;bottom:0;z-index:95;width:min(280px,85vw);transform:translateX(-105%);transition:transform .28s;box-shadow:8px 0 24px rgba(0,0,0,.4)}
+      .sidebar.open{transform:translateX(0)}
+      .sidebar-backdrop{display:block}
+      .btn-hamburger{display:flex}
+      .news-toolbar{padding:12px 14px}
+      .news-scroll{padding:14px}
+      .news-grid{grid-template-columns:1fr}
+    }
+  </style>
+</head>
+<body>
+<script>(function(){var t=localStorage.getItem('axion_prefTheme')||'dark';document.documentElement.setAttribute('data-theme',t);})();</script>
+<div class="app">
+  <div class="sidebar-backdrop" id="sidebarBackdrop" onclick="closeSidebar()"></div>
+  <aside class="sidebar" id="sidebar">
+    <a href="desk.html" class="sidebar-logo">
+      <svg width="26" height="26" viewBox="0 0 40 40" fill="none"><rect width="40" height="40" rx="10" fill="#09090E"/><ellipse cx="20" cy="30" rx="16" ry="6" stroke="#2A2A50" stroke-width=".7" fill="none"/><ellipse cx="20" cy="30" rx="11" ry="4" stroke="#2A2A50" stroke-width=".7" fill="none"/><ellipse cx="20" cy="30" rx="6" ry="2" stroke="#2A2A50" stroke-width=".7" fill="none"/><line x1="20" y1="10" x2="9" y2="31" stroke="#6B7FF0" stroke-width="3.2" stroke-linecap="round"/><line x1="20" y1="10" x2="31" y2="31" stroke="#6B7FF0" stroke-width="3.2" stroke-linecap="round"/><line x1="10" y1="31" x2="30" y2="31" stroke="#6B7FF0" stroke-width="3.2" stroke-linecap="round"/><circle cx="20" cy="10" r="4" fill="#3DD68C"/></svg>
+      <span class="logo-text">Axion<span>Desk</span></span>
+    </a>
+    <span class="nav-label">My Desk</span>
+    <a href="desk.html" class="nav-item"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 01-1 1H4a1 1 0 01-1-1V9.5z"/><path d="M9 21V12h6v9"/></svg>Overview</a>
+    <a href="desk.html#section-trades" class="nav-item"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg>Trade Log</a>
+    <a href="desk.html#section-strategies" class="nav-item"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>Strategies</a>
+    <a href="desk.html#section-markets" class="nav-item"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M7 14l4-4 4 4 5-6"/></svg>Markets</a>
+    <a href="news.html" class="nav-item active"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 22h16a2 2 0 002-2V4a2 2 0 00-2-2H8a2 2 0 00-2 2v16a2 2 0 01-2 2zm0 0a2 2 0 01-2-2v-9c0-1.1.9-2 2-2h2"/><path d="M18 14h-8M15 18h-5M10 6h8v4h-8V6z"/></svg>News</a>
+    <a href="https://axiondesk.feedbear.com" target="_blank" rel="noopener" class="nav-item"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>Review</a>
+    <span class="nav-label">Community</span>
+    <a href="floor.html" class="nav-item"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>The Floor</a>
+    <span class="nav-label">Account</span>
+    <a href="settings.html" class="nav-item"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>Settings</a>
+    <button class="nav-item" onclick="doSignOut()"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>Sign out</button>
+    <div class="sidebar-spacer"></div>
+    <div class="pts-badge">
+      <p class="pts-label">Axion Points</p>
+      <p class="pts-val" id="sidebarPts">—</p>
+      <p class="pts-streak" id="sidebarStreak">—</p>
+    </div>
+    <div class="user-pill">
+      <div class="u-avatar" id="uAvatar">?</div>
+      <div style="min-width:0">
+        <p class="u-name" id="uName">Loading…</p>
+        <p class="u-email" id="uEmail">—</p>
+      </div>
+    </div>
+  </aside>
+
+  <div class="main">
+    <div class="topbar">
+      <button class="btn-hamburger" onclick="toggleSidebar()">≡</button>
+      <div>
+        <div class="page-title">News</div>
+        <div class="page-sub">Markets · India · Global · live headlines</div>
+      </div>
+    </div>
+
+    <div class="news-toolbar">
+      <div class="filter-bar" id="filterBar">
+        <div class="filter-chip active" data-cat="all">All</div>
+        <div class="filter-chip" data-cat="business">Markets</div>
+        <div class="filter-chip" data-cat="india">India</div>
+        <div class="filter-chip" data-cat="world">Global</div>
+        <div class="filter-chip" data-cat="technology">Tech</div>
+        <div class="filter-chip" data-cat="science">Science</div>
+      </div>
+      <div class="toolbar-right">
+        <span class="last-updated" id="lastUpdated">—</span>
+        <button class="btn-refresh" onclick="loadNews(true)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/></svg>
+          Refresh
+        </button>
+      </div>
+    </div>
+
+    <div class="news-scroll">
+      <div class="news-grid" id="newsGrid">
+        <div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div>
+        <div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+  import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyCulaEKuCWd65B739Kb3nTY7ujv70WoyG0",
+    authDomain: "axion-desk.firebaseapp.com",
+    projectId: "axion-desk",
+    storageBucket: "axion-desk.firebasestorage.app",
+    messagingSenderId: "493322474720",
+    appId: "1:493322474720:web:ea6de0e979ef9a61a62c85"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+
+  let currentCat = 'all';
+  let cache = {};
+
+  // Free public endpoints (no API key required for basic use)
+  // Using saurav.tech NewsAPI mirror + category endpoints
+  const ENDPOINTS = {
+    all:        'https://saurav.tech/NewsAPI/top-headlines/category/general/in.json',
+    business:   'https://saurav.tech/NewsAPI/top-headlines/category/business/in.json',
+    india:      'https://saurav.tech/NewsAPI/top-headlines/category/general/in.json',
+    world:      'https://saurav.tech/NewsAPI/everything/cnn.json',
+    technology: 'https://saurav.tech/NewsAPI/top-headlines/category/technology/in.json',
+    science:    'https://saurav.tech/NewsAPI/top-headlines/category/science/in.json'
+  };
+
+  onAuthStateChanged(auth, async user => {
+    if (!user) { location.href = 'login.html'; return; }
+    const snap = await getDoc(doc(db, 'users', user.uid));
+    if (!snap.exists() || !snap.data().termsAccepted) { location.href = 't&c.html'; return; }
+    const d = snap.data();
+    const initials = (d.firstName?.[0]||'') + (d.lastName?.[0]||'');
+    document.getElementById('uAvatar').textContent = initials || '?';
+    document.getElementById('uName').textContent = `${d.firstName||''} ${d.lastName||''}`.trim() || 'Trader';
+    document.getElementById('uEmail').textContent = user.email || '—';
+    document.getElementById('sidebarPts').textContent = (d.points||0).toLocaleString('en-IN') + ' pts';
+    document.getElementById('sidebarStreak').textContent = (d.streak||0) + ' day streak';
+    loadNews();
+  });
+
+  document.getElementById('filterBar').addEventListener('click', e => {
+    const chip = e.target.closest('.filter-chip');
+    if (!chip) return;
+    document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+    chip.classList.add('active');
+    currentCat = chip.dataset.cat;
+    loadNews();
+  });
+
+  window.loadNews = async function(force = false) {
+    const grid = document.getElementById('newsGrid');
+    if (!force && cache[currentCat]) {
+      render(cache[currentCat]);
+      return;
+    }
+    grid.innerHTML = '<div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div>';
+
+    try {
+      const url = ENDPOINTS[currentCat] || ENDPOINTS.all;
+      const res = await fetch(url);
+      if (!res.ok) throw new Error('Network ' + res.status);
+      const data = await res.json();
+      const articles = (data.articles || []).filter(a => a.title && a.title !== '[Removed]');
+      cache[currentCat] = articles;
+      render(articles);
+      document.getElementById('lastUpdated').textContent = 'Updated ' + new Date().toLocaleTimeString('en-IN', {hour:'2-digit', minute:'2-digit'});
+      if (force) showToast('News refreshed', 'g');
+    } catch (err) {
+      console.error(err);
+      grid.innerHTML = `<div class="error-state" style="grid-column:1/-1">
+        <h3>Couldn’t load news</h3>
+        <p>Check your connection and try Refresh.<br/>Some free sources occasionally limit requests.</p>
+        <button class="btn-refresh" style="margin-top:16px" onclick="loadNews(true)">Try again</button>
+      </div>`;
+    }
+  };
+
+  function render(articles) {
+    const grid = document.getElementById('newsGrid');
+    if (!articles.length) {
+      grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1"><h3>No headlines right now</h3><p>Try another category or refresh in a few minutes.</p></div>`;
+      return;
+    }
+    grid.innerHTML = articles.slice(0, 24).map(a => {
+      const img = a.urlToImage
+        ? `<img class="news-img" src="${esc(a.urlToImage)}" alt="" loading="lazy" onerror="this.parentElement.querySelector('.news-img')?.remove(); this.outerHTML='<div class=\\'news-img placeholder\\'>No image</div>'"/>`
+        : `<div class="news-img placeholder">No image</div>`;
+      const time = a.publishedAt ? timeAgo(new Date(a.publishedAt)) : '';
+      const source = a.source?.name || 'Source';
+      return `<a class="news-card" href="${esc(a.url || '#')}" target="_blank" rel="noopener">
+        ${img}
+        <div class="news-body">
+          <div class="news-meta">
+            <span class="news-source">${esc(source)}</span>
+            <span class="news-time">${time}</span>
+          </div>
+          <div class="news-title">${esc(a.title)}</div>
+          <div class="news-desc">${esc(a.description || '')}</div>
+          <span class="news-link">Read full story →</span>
+        </div>
+      </a>`;
+    }).join('');
+  }
+
+  function timeAgo(date) {
+    const s = Math.floor((Date.now() - date) / 1000);
+    if (s < 60) return 'just now';
+    if (s < 3600) return Math.floor(s/60) + 'm ago';
+    if (s < 86400) return Math.floor(s/3600) + 'h ago';
+    return date.toLocaleDateString('en-IN', {day:'numeric', month:'short'});
+  }
+  function esc(str) {
+    return String(str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  window.doSignOut = async function() {
+    try { await signOut(auth); } catch(e) {}
+    location.href = 'login.html';
+  };
+  window.showToast = function(msg, type='') {
+    const t = document.getElementById('toast');
+    t.textContent = msg; t.className = `toast ${type} show`;
+    setTimeout(() => t.classList.remove('show'), 2500);
+  };
+  window.toggleSidebar = function() {
+    document.getElementById('sidebar').classList.toggle('open');
+    document.getElementById('sidebarBackdrop').classList.toggle('show');
+  };
+  window.closeSidebar = function() {
+    document.getElementById('sidebar').classList.remove('open');
+    document.getElementById('sidebarBackdrop').classList.remove('show');
+  };
+</script>
+</body>
+</html>
